@@ -1,9 +1,12 @@
 import sys
 sys.path.append("/home/gsommani/newskymist/src/")
 from datetime import timedelta
+import base64
+import collections
+import pickle
+import zlib
 
 from icecube import dataio
-from icecube.realtime_tools import live
 
 from skymist import i3live
 
@@ -38,14 +41,19 @@ def retrieve_i3file(
             except ValueError as e:
                 LOGGER.error(e)
     
-    events = live.get_events_data(topic, start, stop)
+    events = live_skymist.get_records(start, stop, with_data=True)
     print('I3Live returned {:d} events.'.format(len(events)))
     for event in events:
         if event["value"]["data"]["event_id"] == event_id:
             # write frames to .i3 file
             i3file = dataio.I3File(output, 'w')
-            frames = event['value']['data']['frames']
-            for key, frame in frames.items():
+            text_frames = event['value']['data']['frames']
+            i3_frames = collections.OrderedDict()
+            for frame_type, frame_content in text_frames:
+                frame = pickle.loads(zlib.decompress(base64.b64decode(frame_content)),
+                                     encoding='bytes')
+                i3_frames[frame_type] = frame
+            # for frame in i3_frames:
                 i3file.push(frame)
             i3file.close()
             print('Wrote', output)
