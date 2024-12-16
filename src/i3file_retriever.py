@@ -10,8 +10,6 @@ from icecube import dataio
 
 from skymist import i3live
 
-topic = "neutrino"
-
 def retrieve_i3file(
     run_id: int, event_id: int, output: str = "",
 ) -> None:
