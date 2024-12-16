@@ -2,7 +2,6 @@ import sys
 sys.path.append("/home/gsommani/newskymist/src/")
 from datetime import timedelta
 import base64
-import collections
 import pickle
 import zlib
 
@@ -46,11 +45,9 @@ def retrieve_i3file(
             # write frames to .i3 file
             i3file = dataio.I3File(output, 'w')
             text_frames = event['value']['data']['frames']
-            i3_frames = collections.OrderedDict()
             for frame_type, frame_content in text_frames:
                 frame = pickle.loads(zlib.decompress(base64.b64decode(frame_content)),
                                      encoding='bytes')
-                i3_frames[frame_type] = frame
             # for frame in i3_frames:
                 i3file.push(frame)
             i3file.close()
