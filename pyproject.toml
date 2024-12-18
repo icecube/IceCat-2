@@ -1,0 +1,10 @@
+[tool.poetry]
+name = "IceCat-2"
+version = "0.0.0"
+description = "IceCat-2"
+authors = ["Giacomo Sommani <sommani@astro.ruhr-uni-bochum.de>", "Nora Valtonen-Mattila <nora.valtonen-mattila@icecube.wisc.edu>", "Angela Zegarelli <azegarelli@icecube.wisc.edu>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+skymist = { git = "https://github.com/icecube/skymist.git", branch = "main" }
+
