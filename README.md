@@ -15,9 +15,11 @@ Processing steps (doc from Mehr): https://docs.google.com/document/d/1mtB2rFwTU3
 
 **How to load the environment** 
 
+```
 conda create -n icecat python=3.10
 conda activate icecat
 python -m venv skymist-venv && echo "unset PYTHONPATH" >> skymist-venv/bin/activate
 source skymist-venv/bin/activate
 poetry install
 /cvmfs/icecube.opensciencegrid.org/users/blaufuss/realtime_Nov24/build/env-shell.sh
+```
