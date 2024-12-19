@@ -13,7 +13,7 @@ Processing steps (doc from Mehr): https://docs.google.com/document/d/1mtB2rFwTU3
 
 -------------------------------------------------------------------------------------------------------------------
 
-** How to load the environment **
+**How to load the environment** 
 
 conda create -n icecat python=3.10
 conda activate icecat
