@@ -1,13 +1,43 @@
-import sys
-sys.path.append("/home/gsommani/newskymist/src/")
+# import sys
+# sys.path.append("/home/gsommani/newskymist/src/")
 from datetime import timedelta
 import base64
+from pathlib import Path
 import pickle
 import zlib
+import os
 
-from icecube import dataio
+from icecube import dataio, icetray
+from icecube.icetray import I3Tray
+from icecube.frame_object_diff.segments import uncompress
 
 from skymist import i3live
+from skymist.skyscan import SkyScan
+
+BASELINES_PATH = "/data/user/followup/baseline_gcds/"
+
+
+skyscan = SkyScan()
+skyscan.scan_file(
+    Path("/home/gsommani/another_trial.i3"),
+    "splinempe",
+    "full",
+    10,
+    "latest",
+)
+
+
+def get_base_gcd_frames(base_filename: str):
+    base_path = BASELINES_PATH + base_filename
+    i3baseline = dataio.I3File(base_path)
+    for baseframe in i3baseline:
+        if baseframe.Stop == icetray.I3Frame.Geometry:
+            base_geo = baseframe.Get("I3Geometry")
+        elif baseframe.Stop == icetray.I3Frame.Calibration:
+            base_cal = baseframe.Get("I3Calibration")
+        elif baseframe.Stop == icetray.I3Frame.DetectorStatus:
+            base_det = baseframe.Get("I3DetectorStatus")
+    return base_geo, base_cal, base_det
 
 def retrieve_i3file(
     run_id: int, event_id: int, output: str = "",
@@ -44,11 +74,88 @@ def retrieve_i3file(
         if event["value"]["data"]["event_id"] == event_id:
             # write frames to .i3 file
             i3file = dataio.I3File(output, 'w')
+            frames = []
             text_frames = event['value']['data']['frames']
             for frame_type, frame_content in text_frames:
                 frame = pickle.loads(zlib.decompress(base64.b64decode(frame_content)),
                                      encoding='bytes')
-            # for frame in i3_frames:
+                print(frame)
+                if frame.Stop == icetray.I3Frame.Physics:
+                    header = frame["I3EventHeader"]
+                frames.append(frame)
+
+                if frame.Stop == icetray.I3Frame.Geometry:
+                    diff_geo = frame.Get("I3GeometryDiff")
+                    base_geo, base_cal, base_det = get_base_gcd_frames(
+                        diff_geo.base_filename
+                    )
+                    frame.Put(
+                        "I3Geometry",
+                        diff_geo.unpack(base_geo),
+                        icetray.I3Frame.Geometry
+                    )
+                    frame.Delete("I3GeometryDiff")
+                elif frame.Stop == icetray.I3Frame.Calibration:
+                    diff_cal = frame.Get("I3CalibrationDiff")
+                    frame.Put(
+                        "I3Calibration",
+                        diff_cal.unpack(base_cal),
+                        icetray.I3Frame.Calibration
+                    )
+                    frame.Delete("I3CalibrationDiff")
+                elif frame.Stop == icetray.I3Frame.DetectorStatus:
+                    diff_det = frame.Get("I3DetectorStatusDiff")
+                    frame.Put(
+                        "I3DetectorStatus",
+                        diff_det.unpack(base_det),
+                        icetray.I3Frame.DetectorStatus
+                    )
+                    frame.Delete("I3DetectorStatusDiff")
+                elif frame.Stop ==icetray.I3Frame.Physics:
+                    keys = frame.keys()
+                    for key in keys:
+                        if key[:2] == "l2":
+                            l2_name = key.split("online_")[-1]
+                            newkey = "OnlineL2_" + l2_name
+                            frame.Put(
+                                newkey,
+                                frame.Get(key)
+                            )
+                            frame.Delete(key)
+                
+            for frame in frames:
+                if frame.Stop == icetray.I3Frame.DAQ:
+                    frame.Put("I3EventHeader", header)
+                    frame.Delete("QI3EventHeader")
                 i3file.push(frame)
             i3file.close()
             print('Wrote', output)
+
+"""
+    tray = I3Tray()
+    
+    print(f"Opening {output}")
+    tray.AddModule('I3Reader', "reader", filenamelist=[output])
+    
+    tray.Add(
+        uncompress,
+        base_filename="/data/user/followup/baseline_gcds/baseline_gcd_140033.i3",
+    )
+    
+    tray.AddModule(
+        'I3Writer',
+        'writer',
+         Filename=output.split(".")[0] + "_banana.i3",
+         Streams=[
+             icetray.I3Frame.Geometry,
+             icetray.I3Frame.Calibration,
+             icetray.I3Frame.DetectorStatus,
+             icetray.I3Frame.DAQ,
+             icetray.I3Frame.Physics,
+        ]
+    )
+    
+    tray.Execute()
+
+    # os.remove(output)
+"""
