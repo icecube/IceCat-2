@@ -1,4 +1,4 @@
 The file AlertList_tot.txt contains RUNID and EVENTID that will be part of IceCat-2
 
 - The first 348 alerts come from IceCat-1 (up to RUNID=138449 and EVENTNUM=20481611): https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/SCRUCD
-- New alerts start from the gold alert of the 27th October 2023, with RUNID=138487 and EVENTNUM=60138479. Originally, in total these were 23, but one of those has been retracted (https://gcn.nasa.gov/circulars/37794); hence at the end we have 22 new alerts
+- New alerts start from the gold alert of the 27th October 2023, with RUNID=138487 and EVENTNUM=60138479. Originally, in total these were 26, but one of those has been retracted (https://gcn.nasa.gov/circulars/37794); hence at the end we have 25 new alerts
