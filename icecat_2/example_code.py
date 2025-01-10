@@ -22,8 +22,8 @@ for i in range(10,len(run)):
         ##    This difference will be crucial to define the reco algorithm to be launched (splinempe or millipede_wilks for LED and HED, respectively)
         infile='run'+str(run[i])+'_eventid'+str(eventid[i])+'_v2.i3'
         te_orig = get_truncated_energy_orig.extract_truncated_energy_orig_from_i3file(infile)
-        if(te_orig>=50000): evt_type='HED'
-        if(te_orig<50000):  evt_type='LED'
+        if(te_orig>=cfg.te_orig_threshold): evt_type='HED'
+        if(te_orig<cfg.te_orig_threshold):  evt_type='LED'
         print(run[i],eventid[i],te_orig/1000,evt_type) ##print on terminal for checking purposes
     except Exception as e:
         print(e)
