@@ -24,9 +24,12 @@ from icecube import (
 )
 from icecube.STTools.seededRT.configuration_services import I3DOMLinkSeededRTConfigurationService
 
+import config
+cfg = config.config()
+
 def extract_baseline_file(run):
     
-    gcd_folder = '/data/user/followup/baseline_gcds/'
+    gcd_folder = cfg.baseline_gcd_path
 
     # Get a list of all files in the folder with their full paths
     gcd_files = [os.path.join(gcd_folder, f) for f in os.listdir(gcd_folder) if os.path.isfile(os.path.join(gcd_folder, f))]
@@ -43,14 +46,13 @@ def extract_baseline_file(run):
 
 def add_truncated_energy_orig_i3file(run, eventid):
 
-    input_file  = 'output/run'+str(run)+'_eventid'+str(eventid)+'.i3'
-    output_file = 'output/run'+str(run)+'_eventid'+str(eventid)+'_v2.i3'
+    input_file  = cfg.output_dir+'run'+str(run)+'_eventid'+str(eventid)+'.i3'
+    output_file = cfg.output_dir+'run'+str(run)+'_eventid'+str(eventid)+'_v2.i3'
 
     gcd_file = extract_baseline_file(run)
 
-    spline_dir = "/cvmfs/icecube.opensciencegrid.org/data/photon-tables/splines/"
-    amplitudetable = spline_dir+"InfBareMu_mie_abs_z20a10_V2.fits"
-    timingtable = spline_dir+"InfBareMu_mie_prob_z20a10_V2.fits"
+    amplitudetable = cfg.splines_tables_path+"InfBareMu_mie_abs_z20a10_V2.fits"
+    timingtable = cfg.splines_tables_path+"InfBareMu_mie_prob_z20a10_V2.fits"
     
     tray = I3Tray()
     tray.AddModule("I3Reader", "reader", FilenameList = [

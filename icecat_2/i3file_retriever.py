@@ -1,5 +1,3 @@
-# import sys
-# sys.path.append("/home/gsommani/newskymist/src/")
 from datetime import timedelta
 import base64
 from pathlib import Path
@@ -12,23 +10,12 @@ from icecube.icetray import I3Tray
 from icecube.frame_object_diff.segments import uncompress
 
 from skymist import i3live
-from skymist.skyscan import SkyScan
 
-BASELINES_PATH = "/data/user/followup/baseline_gcds/"
-
-
-skyscan = SkyScan()
-skyscan.scan_file(
-    Path("/home/gsommani/another_trial.i3"),
-    "splinempe",
-    "full",
-    10,
-    "latest",
-)
-
+import config
+cfg = config.config()
 
 def get_base_gcd_frames(base_filename: str):
-    base_path = BASELINES_PATH + base_filename
+    base_path = cfg.baseline_gcd_path + base_filename
     i3baseline = dataio.I3File(base_path)
     for baseframe in i3baseline:
         if baseframe.Stop == icetray.I3Frame.Geometry:
@@ -39,9 +26,7 @@ def get_base_gcd_frames(base_filename: str):
             base_det = baseframe.Get("I3DetectorStatus")
     return base_geo, base_cal, base_det
 
-def retrieve_i3file(
-    run_id: int, event_id: int, output: str = "",
-) -> None:
+def retrieve_i3file(run_id: int, event_id: int, output_str: str = ""):
 
     live_skymist = i3live.I3Live()
     events_run = live_skymist.events_from_run(run_number=run_id)
@@ -73,7 +58,7 @@ def retrieve_i3file(
     for event in events:
         if event["value"]["data"]["event_id"] == event_id:
             # write frames to .i3 file
-            i3file = dataio.I3File(output, 'w')
+            i3file = dataio.I3File(cfg.output_dir+output_str, 'w')
             frames = []
             text_frames = event['value']['data']['frames']
             for frame_type, frame_content in text_frames:
@@ -114,6 +99,7 @@ def retrieve_i3file(
                 elif frame.Stop ==icetray.I3Frame.Physics:
                     keys = frame.keys()
                     for key in keys:
+                        ## These lines uniformy the OnlineL2 key since it can be written in two different ways
                         if key[:2] == "l2":
                             l2_name = key.split("online_")[-1]
                             newkey = "OnlineL2_" + l2_name
@@ -122,40 +108,20 @@ def retrieve_i3file(
                                 frame.Get(key)
                             )
                             frame.Delete(key)
-                
+                        ## I3RecoPulseSeriesMapMask can be "SplitUncleanedInIcePulses" or "SplitInIcePulses"
+                        ## These lines uniformy the key (needed for truncated energy orig retrieval)
+                        if key == "SplitUncleanedInIcePulses":
+                            newkey = "SplitInIcePulses"
+                            frame.Put(
+                                newkey,
+                                frame.Get(key)
+                            )
+                            frame.Delete(key)
+
             for frame in frames:
                 if frame.Stop == icetray.I3Frame.DAQ:
                     frame.Put("I3EventHeader", header)
                     frame.Delete("QI3EventHeader")
                 i3file.push(frame)
             i3file.close()
-            print('Wrote', output)
-
-"""
-    tray = I3Tray()
-    
-    print(f"Opening {output}")
-    tray.AddModule('I3Reader', "reader", filenamelist=[output])
-    
-    tray.Add(
-        uncompress,
-        base_filename="/data/user/followup/baseline_gcds/baseline_gcd_140033.i3",
-    )
-    
-    tray.AddModule(
-        'I3Writer',
-        'writer',
-         Filename=output.split(".")[0] + "_banana.i3",
-         Streams=[
-             icetray.I3Frame.Geometry,
-             icetray.I3Frame.Calibration,
-             icetray.I3Frame.DetectorStatus,
-             icetray.I3Frame.DAQ,
-             icetray.I3Frame.Physics,
-        ]
-    )
-    
-    tray.Execute()
-
-    # os.remove(output)
-"""
+            print('Wrote', cfg.output_dir+output_str)
