@@ -46,8 +46,8 @@ def extract_baseline_file(run):
 
 def add_truncated_energy_orig_i3file(run, eventid):
 
-    input_file  = cfg.output_dir+'run'+str(run)+'_eventid'+str(eventid)+'.i3'
-    output_file = cfg.output_dir+'run'+str(run)+'_eventid'+str(eventid)+'_v2.i3'
+    input_file  = cfg.i3files_dir+'run'+str(run)+'_eventid'+str(eventid)+'.i3'
+    output_file = cfg.i3files_dir+'run'+str(run)+'_eventid'+str(eventid)+'_v2.i3'
 
     gcd_file = extract_baseline_file(run)
 
@@ -127,7 +127,7 @@ def load_frames(infile):
 
 def extract_truncated_energy_orig_from_i3file(infile):
 
-    frame_packet = load_frames(infile)
+    frame_packet = load_frames(cfg.i3files_dir+infile)
     for f in frame_packet:
         if f.Stop == icetray.I3Frame.Physics:
             te_orig = f["OnlineL2_SplineMPE_TruncatedEnergy_ORIG_Muon"].energy

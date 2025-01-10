@@ -58,7 +58,7 @@ def retrieve_i3file(run_id: int, event_id: int, output_str: str = ""):
     for event in events:
         if event["value"]["data"]["event_id"] == event_id:
             # write frames to .i3 file
-            i3file = dataio.I3File(cfg.output_dir+output_str, 'w')
+            i3file = dataio.I3File(cfg.i3files_dir+output_str, 'w')
             frames = []
             text_frames = event['value']['data']['frames']
             for frame_type, frame_content in text_frames:
@@ -124,4 +124,4 @@ def retrieve_i3file(run_id: int, event_id: int, output_str: str = ""):
                     frame.Delete("QI3EventHeader")
                 i3file.push(frame)
             i3file.close()
-            print('Wrote', cfg.output_dir+output_str)
+            print('Wrote', cfg.i3files_dir+output_str)
