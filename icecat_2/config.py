@@ -6,7 +6,9 @@ class config:
     splines_tables_path = '/cvmfs/icecube.opensciencegrid.org/data/photon-tables/splines/'
 
     workdir             = '/data/user/azegarelli/IceCat-2/'
-    i3files_dir          = workdir+'/icecat_2/output/'
+
+    alerts_table_dir    = workdir+'/docs/'
+    i3files_dir         = workdir+'/icecat_2/output/'
     # Create the folder if it doesn't exist
     if not os.path.exists(i3files_dir):
         os.makedirs(i3files_dir)
