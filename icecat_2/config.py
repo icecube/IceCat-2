@@ -8,5 +8,5 @@ class config:
     workdir             = '/data/user/azegarelli/IceCat-2/'
     i3files_dir          = workdir+'/icecat_2/output/'
     # Create the folder if it doesn't exist
-    if not os.path.exists(output_dir):
-        os.makedirs(output_dir)
+    if not os.path.exists(i3files_dir):
+        os.makedirs(i3files_dir)
