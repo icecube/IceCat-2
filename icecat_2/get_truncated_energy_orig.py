@@ -1,5 +1,8 @@
 from icecube.icetray import I3Tray, I3Units, I3Frame
 import os
+from os import listdir
+from os.path import isfile, join
+
 from icecube import (
     dataclasses,
     DomTools,
@@ -22,19 +25,21 @@ from icecube import (
 from icecube.STTools.seededRT.configuration_services import I3DOMLinkSeededRTConfigurationService
 
 def extract_baseline_file(run):
+    
     gcd_folder = '/data/user/followup/baseline_gcds/'
-    if(run>=127997): gcd_file = '2016_06_03_Run127997.i3'
-    if(run>=127381): gcd_file = '2016_01_08_Run127381.i3'
-    if(run>=131265): gcd_file = 'baseline_gcd_131265.i3'
-    if(run>=131577): gcd_file = 'baseline_gcd_131577.i3'
-    if(run>=132847): gcd_file = 'baseline_gcd_132847.i3'
-    if(run>=134137): gcd_file = 'baseline_gcd_134137.i3'
-    if(run>=135328): gcd_file = 'baseline_gcd_135328.i3'
-    if(run>=135417): gcd_file = 'baseline_gcd_135417.i3'
-    if(run>=136897): gcd_file = 'baseline_gcd_136897.i3'
-    if(run>=138615): gcd_file = 'baseline_gcd_138615.i3'
-    if(run>=140033): gcd_file = 'baseline_gcd_140033.i3'
-    return gcd_folder+gcd_file
+
+    # Get a list of all files in the folder with their full paths
+    gcd_files = [os.path.join(gcd_folder, f) for f in os.listdir(gcd_folder) if os.path.isfile(os.path.join(gcd_folder, f))]
+    # Sort files by their modification time
+    gcd_files_sorted_by_time = sorted(gcd_files, key=os.path.getmtime)
+
+    # Take the most updated baseline at run occurrence 
+    for f in gcd_files_sorted_by_time:
+        run_f = f[-9:-3]    # Take the run starting from which the baseline file was made available (from the filename itself)
+        if(int(run_f)<run):
+            gcd_file = f    
+
+    return f
 
 def add_truncated_energy_orig_i3file(run, eventid):
 
