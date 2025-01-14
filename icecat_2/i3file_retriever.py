@@ -5,13 +5,17 @@ import pickle
 import zlib
 import os
 
-from icecube import dataio, icetray
+from icecube import (
+    dataio,
+    icetray,
+    gulliver,
+)
 from icecube.icetray import I3Tray
 from icecube.frame_object_diff.segments import uncompress
 
 from skymist import i3live
 
-import config
+from . import config
 cfg = config.config()
 
 def get_base_gcd_frames(base_filename: str):
@@ -103,6 +107,7 @@ def retrieve_i3file(run_id: int, event_id: int, output_str: str = ""):
                         if key[:2] == "l2":
                             l2_name = key.split("online_")[-1]
                             newkey = "OnlineL2_" + l2_name
+                            print(key, newkey)
                             frame.Put(
                                 newkey,
                                 frame.Get(key)
