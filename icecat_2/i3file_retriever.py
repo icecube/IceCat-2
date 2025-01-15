@@ -1,5 +1,6 @@
 from datetime import timedelta
 import base64
+import glob
 from pathlib import Path
 import pickle
 import zlib
@@ -10,6 +11,7 @@ from icecube import (
     icetray,
     gulliver,
     recclasses,
+    dataclasses
 )
 from icecube.icetray import I3Tray
 from icecube.frame_object_diff.segments import uncompress
@@ -88,9 +90,75 @@ class GCD_Handler:
         return frame
         
 
-#def retrieve_old_i3file(
-#    run_id: int, event_id: int output_str: str = ""
-#):
+def retrieve_old_i3file(
+    run_id: int, event_id: int, output_str: str = ""
+):
+    old_i3files = glob.glob(cfg.old_alerts_path + "*_scanned1024.i3.zst")
+    run_evt_path = f"{cfg.old_alerts_path}Run00{run_id}_event{event_id}_scanned1024.i3.zst"
+    run_path = f"{cfg.old_alerts_path}Run00{run_id}_scanned1024.i3.zst"
+    if run_evt_path in old_i3files:
+        alert_path = run_evt_path
+    elif run_path in old_i3files:
+        alert_path = run_path
+    else:
+        raise ValueError(
+            f"Run {run_id} event {event_id} not in {cfg.old_alerts_path}"
+        )
+    input_i3file = dataio.I3File(alert_path)
+    output_i3file = dataio.I3File(cfg.i3files_dir+output_str, 'w')
+    found_physics = False
+    inserted_keys = []
+    for frame in input_i3file:
+        if not found_physics: print(frame.Stop)
+        if frame.Stop in [
+            icetray.I3Frame.Geometry,
+            icetray.I3Frame.Calibration,
+            icetray.I3Frame.DetectorStatus,
+            icetray.I3Frame.DAQ,
+            icetray.I3Frame.Physics
+        ] and not found_physics:
+            if frame.Stop == icetray.I3Frame.Physics:
+                filter_mask = frame["FilterMask"]
+                streams = []
+                passed_HESE = filter_mask["HESEFilter_15"].condition_passed
+                passed_GFU = filter_mask["GFUFilter_17"].condition_passed
+                if passed_GFU:
+                    streams.append("neutrino")
+                if passed_HESE:
+                    streams.append("HESE")
+                frame.Put(
+                    "Streams",
+                    dataclasses.I3VectorString(streams)
+                )
+                found_physics = True
+            for key_in_frame in frame.keys():
+                if key_in_frame.split("/")[0] == "__old__":
+                    new_key_in_frame = key_in_frame.split("/")[-1]
+                    if new_key_in_frame in cfg.possible_keys:
+                        if not new_key_in_frame in inserted_keys:
+                            frame.Put(
+                                new_key_in_frame,
+                                frame.Get(key_in_frame),
+                                frame.Stop
+                            )
+                            inserted_keys.append(new_key_in_frame)
+                    frame.Delete(key_in_frame)
+                elif key_in_frame not in cfg.possible_keys:
+                    frame.Delete(key_in_frame)
+                elif key_in_frame not in inserted_keys:
+                    element = frame.Get(key_in_frame)
+                    frame.Delete(key_in_frame)
+                    frame.Put(
+                        key_in_frame,
+                        element,
+                        frame.Stop
+                    )
+                    inserted_keys.append(key_in_frame)
+            print(frame)
+            output_i3file.push(frame)
+    output_i3file.close()
+    print('Wrote', cfg.i3files_dir+output_str)
+
 
 def retrieve_i3file(run_id: int, event_id: int, output_str: str = ""):
 
@@ -128,6 +196,7 @@ def retrieve_i3file(run_id: int, event_id: int, output_str: str = ""):
             gcd_handler = GCD_Handler()
             frames = []
             text_frames = event['value']['data']['frames']
+            streams = event['value']['streams']
             for frame_type, frame_content in text_frames:
                 frame = pickle.loads(zlib.decompress(base64.b64decode(frame_content)),
                                      encoding='bytes')
@@ -141,7 +210,6 @@ def retrieve_i3file(run_id: int, event_id: int, output_str: str = ""):
                     icetray.I3Frame.Calibration,
                     icetray.I3Frame.DetectorStatus,
                 ]:
-                    print("Bananaaaaaa")
                     frame = gcd_handler.prepare_GCD_from_diff(frame)
                 
                 elif frame.Stop == icetray.I3Frame.Physics:
@@ -166,6 +234,11 @@ def retrieve_i3file(run_id: int, event_id: int, output_str: str = ""):
                                 frame.Get(key)
                             )
                             frame.Delete(key)
+
+                    frame.Put(
+                        "Streams",
+                        dataclasses.I3VectorString(streams)
+                    )
 
             for frame in frames:
                 if frame.Stop == icetray.I3Frame.DAQ:
