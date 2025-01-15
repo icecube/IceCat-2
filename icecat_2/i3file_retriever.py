@@ -1,30 +1,164 @@
 from datetime import timedelta
 import base64
+import glob
 from pathlib import Path
 import pickle
 import zlib
 import os
 
-from icecube import dataio, icetray
+from icecube import (
+    dataio,
+    icetray,
+    gulliver,
+    recclasses,
+    dataclasses
+)
 from icecube.icetray import I3Tray
 from icecube.frame_object_diff.segments import uncompress
 
 from skymist import i3live
 
-import config
+from . import config
+
 cfg = config.config()
 
-def get_base_gcd_frames(base_filename: str):
-    base_path = cfg.baseline_gcd_path + base_filename
-    i3baseline = dataio.I3File(base_path)
-    for baseframe in i3baseline:
-        if baseframe.Stop == icetray.I3Frame.Geometry:
-            base_geo = baseframe.Get("I3Geometry")
-        elif baseframe.Stop == icetray.I3Frame.Calibration:
-            base_cal = baseframe.Get("I3Calibration")
-        elif baseframe.Stop == icetray.I3Frame.DetectorStatus:
-            base_det = baseframe.Get("I3DetectorStatus")
-    return base_geo, base_cal, base_det
+class GCD_Handler:
+    
+
+    def __init__(self):
+        self.base_filename = ""
+        self.base_geo = None
+        self.base_cal = None
+        self.base_det = None
+
+
+    def get_base_gcd_frames(self, base_filename: str):
+        self.base_filename = base_filename
+        base_path = cfg.baseline_gcd_path + self.base_filename
+        i3baseline = dataio.I3File(base_path)
+        for baseframe in i3baseline:
+            if baseframe.Stop == icetray.I3Frame.Geometry:
+                self.base_geo = baseframe.Get("I3Geometry")
+            elif baseframe.Stop == icetray.I3Frame.Calibration:
+                self.base_cal = baseframe.Get("I3Calibration")
+            elif baseframe.Stop == icetray.I3Frame.DetectorStatus:
+                self.base_det = baseframe.Get("I3DetectorStatus")
+        return
+
+        
+    def prepare_geometry(self, frame):
+        diff_geo = frame.Get("I3GeometryDiff")
+        self.get_base_gcd_frames(diff_geo.base_filename)
+        frame.Put(
+            "I3Geometry",
+            diff_geo.unpack(self.base_geo),
+            icetray.I3Frame.Geometry
+        )
+        frame.Delete("I3GeometryDiff")
+        return frame
+
+
+    def prepare_calibration(self, frame):
+        diff_cal = frame.Get("I3CalibrationDiff")
+        frame.Put(
+            "I3Calibration",
+            diff_cal.unpack(self.base_cal),
+            icetray.I3Frame.Calibration
+        )
+        frame.Delete("I3CalibrationDiff")
+        return frame
+
+
+    def prepare_detector_status(self, frame):
+        diff_det = frame.Get("I3DetectorStatusDiff")
+        frame.Put(
+            "I3DetectorStatus",
+            diff_det.unpack(self.base_det),
+            icetray.I3Frame.DetectorStatus
+        )
+        frame.Delete("I3DetectorStatusDiff")
+        return frame
+
+
+    def prepare_GCD_from_diff(self, frame):
+        if frame.Stop == icetray.I3Frame.Geometry:
+            self.prepare_geometry(frame)
+        elif frame.Stop == icetray.I3Frame.Calibration:
+            self.prepare_calibration(frame)
+        elif frame.Stop == icetray.I3Frame.DetectorStatus:
+            self.prepare_detector_status(frame)
+        return frame
+        
+
+def retrieve_old_i3file(
+    run_id: int, event_id: int, output_str: str = ""
+):
+    old_i3files = glob.glob(cfg.old_alerts_path + "*_scanned1024.i3.zst")
+    run_evt_path = f"{cfg.old_alerts_path}Run00{run_id}_event{event_id}_scanned1024.i3.zst"
+    run_path = f"{cfg.old_alerts_path}Run00{run_id}_scanned1024.i3.zst"
+    if run_evt_path in old_i3files:
+        alert_path = run_evt_path
+    elif run_path in old_i3files:
+        alert_path = run_path
+    else:
+        raise ValueError(
+            f"Run {run_id} event {event_id} not in {cfg.old_alerts_path}"
+        )
+    input_i3file = dataio.I3File(alert_path)
+    output_i3file = dataio.I3File(cfg.i3files_dir+output_str, 'w')
+    found_physics = False
+    inserted_keys = []
+    for frame in input_i3file:
+        if not found_physics: print(frame.Stop)
+        if frame.Stop in [
+            icetray.I3Frame.Geometry,
+            icetray.I3Frame.Calibration,
+            icetray.I3Frame.DetectorStatus,
+            icetray.I3Frame.DAQ,
+            icetray.I3Frame.Physics
+        ] and not found_physics:
+            if frame.Stop == icetray.I3Frame.Physics:
+                filter_mask = frame["FilterMask"]
+                streams = []
+                passed_HESE = filter_mask["HESEFilter_15"].condition_passed
+                passed_GFU = filter_mask["GFUFilter_17"].condition_passed
+                if passed_GFU:
+                    streams.append("neutrino")
+                if passed_HESE:
+                    streams.append("HESE")
+                frame.Put(
+                    "Streams",
+                    dataclasses.I3VectorString(streams)
+                )
+                found_physics = True
+            for key_in_frame in frame.keys():
+                if key_in_frame.split("/")[0] == "__old__":
+                    new_key_in_frame = key_in_frame.split("/")[-1]
+                    if new_key_in_frame in cfg.possible_keys:
+                        if not new_key_in_frame in inserted_keys:
+                            frame.Put(
+                                new_key_in_frame,
+                                frame.Get(key_in_frame),
+                                frame.Stop
+                            )
+                            inserted_keys.append(new_key_in_frame)
+                    frame.Delete(key_in_frame)
+                elif key_in_frame not in cfg.possible_keys:
+                    frame.Delete(key_in_frame)
+                elif key_in_frame not in inserted_keys:
+                    element = frame.Get(key_in_frame)
+                    frame.Delete(key_in_frame)
+                    frame.Put(
+                        key_in_frame,
+                        element,
+                        frame.Stop
+                    )
+                    inserted_keys.append(key_in_frame)
+            print(frame)
+            output_i3file.push(frame)
+    output_i3file.close()
+    print('Wrote', cfg.i3files_dir+output_str)
+
 
 def retrieve_i3file(run_id: int, event_id: int, output_str: str = ""):
 
@@ -59,8 +193,10 @@ def retrieve_i3file(run_id: int, event_id: int, output_str: str = ""):
         if event["value"]["data"]["event_id"] == event_id:
             # write frames to .i3 file
             i3file = dataio.I3File(cfg.i3files_dir+output_str, 'w')
+            gcd_handler = GCD_Handler()
             frames = []
             text_frames = event['value']['data']['frames']
+            streams = event['value']['streams']
             for frame_type, frame_content in text_frames:
                 frame = pickle.loads(zlib.decompress(base64.b64decode(frame_content)),
                                      encoding='bytes')
@@ -69,40 +205,21 @@ def retrieve_i3file(run_id: int, event_id: int, output_str: str = ""):
                     header = frame["I3EventHeader"]
                 frames.append(frame)
 
-                if frame.Stop == icetray.I3Frame.Geometry:
-                    diff_geo = frame.Get("I3GeometryDiff")
-                    base_geo, base_cal, base_det = get_base_gcd_frames(
-                        diff_geo.base_filename
-                    )
-                    frame.Put(
-                        "I3Geometry",
-                        diff_geo.unpack(base_geo),
-                        icetray.I3Frame.Geometry
-                    )
-                    frame.Delete("I3GeometryDiff")
-                elif frame.Stop == icetray.I3Frame.Calibration:
-                    diff_cal = frame.Get("I3CalibrationDiff")
-                    frame.Put(
-                        "I3Calibration",
-                        diff_cal.unpack(base_cal),
-                        icetray.I3Frame.Calibration
-                    )
-                    frame.Delete("I3CalibrationDiff")
-                elif frame.Stop == icetray.I3Frame.DetectorStatus:
-                    diff_det = frame.Get("I3DetectorStatusDiff")
-                    frame.Put(
-                        "I3DetectorStatus",
-                        diff_det.unpack(base_det),
-                        icetray.I3Frame.DetectorStatus
-                    )
-                    frame.Delete("I3DetectorStatusDiff")
-                elif frame.Stop ==icetray.I3Frame.Physics:
+                if frame.Stop in [
+                    icetray.I3Frame.Geometry,
+                    icetray.I3Frame.Calibration,
+                    icetray.I3Frame.DetectorStatus,
+                ]:
+                    frame = gcd_handler.prepare_GCD_from_diff(frame)
+                
+                elif frame.Stop == icetray.I3Frame.Physics:
                     keys = frame.keys()
                     for key in keys:
                         ## These lines uniformy the OnlineL2 key since it can be written in two different ways
                         if key[:2] == "l2":
                             l2_name = key.split("online_")[-1]
                             newkey = "OnlineL2_" + l2_name
+                            print(key, newkey)
                             frame.Put(
                                 newkey,
                                 frame.Get(key)
@@ -117,6 +234,11 @@ def retrieve_i3file(run_id: int, event_id: int, output_str: str = ""):
                                 frame.Get(key)
                             )
                             frame.Delete(key)
+
+                    frame.Put(
+                        "Streams",
+                        dataclasses.I3VectorString(streams)
+                    )
 
             for frame in frames:
                 if frame.Stop == icetray.I3Frame.DAQ:
