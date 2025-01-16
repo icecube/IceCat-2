@@ -18,7 +18,7 @@ from icecube.frame_object_diff.segments import uncompress
 
 from skymist import i3live
 
-from . import config
+import config
 
 cfg = config.config()
 
@@ -97,6 +97,7 @@ def retrieve_old_i3file(
     if int(run_id) == cfg.run_exception and int(event_id) == cfg.event_exception:
         alert_path = cfg.old_alerts_path_exception + 'Level2pass2_IC86.2013_data_Run00123986_Subrun00000000_00000212_event77999595.i3.zst'
         is_exception = True
+        first_physics_passed = False
     else:
         old_i3files = glob.glob(cfg.old_alerts_path + "*_scanned1024.i3.zst")
         run_evt_path = f"{cfg.old_alerts_path}Run00{run_id}_event{event_id}_scanned1024.i3.zst"
@@ -123,6 +124,9 @@ def retrieve_old_i3file(
             icetray.I3Frame.Physics
         ] and not found_physics:
             if frame.Stop == icetray.I3Frame.Physics:
+                if is_exception and not first_physics_passed:
+                    first_physics_passed = True
+                    continue
                 filter_mask = frame["FilterMask"]
                 streams = []
                 passed_HESE = filter_mask["HESEFilter_15"].condition_passed
@@ -135,10 +139,7 @@ def retrieve_old_i3file(
                     "Streams",
                     dataclasses.I3VectorString(streams)
                 )
-                if not is_exception:
-                    found_physics = True
-                else:
-                    is_exception = False
+                found_physics = True
             for key_in_frame in frame.keys():
                 if key_in_frame.split("/")[0] == "__old__":
                     new_key_in_frame = key_in_frame.split("/")[-1]
