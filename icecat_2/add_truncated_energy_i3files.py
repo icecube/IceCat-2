@@ -26,7 +26,7 @@ from icecube.STTools.seededRT.configuration_services import I3DOMLinkSeededRTCon
 import config
 cfg = config.config()
 
-def add_truncated_energy_orig_i3file(run, eventid, tag=''):
+def add_truncated_energy_i3file(run, eventid, tag=''):
 
     input_file  = cfg.i3files_dir+'run'+str(run)+'_eventid'+str(eventid)+'_'+tag+'.i3'
     output_file = cfg.i3files_dir+'run'+str(run)+'_eventid'+str(eventid)+'_'+tag+'_te.i3'
@@ -106,7 +106,7 @@ def load_frames(infile):
        frame = i3f.pop_frame()
        frame_packet.append(frame)
 
-def extract_truncated_energy_orig_from_i3file(infile):
+def extract_truncated_energy_orig_muon_from_i3file(infile):
 
     frame_packet = load_frames(cfg.i3files_dir+infile)
     for f in frame_packet:
