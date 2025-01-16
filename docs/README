@@ -2,3 +2,13 @@ The file AlertList_tot.txt contains RUNID and EVENTID that will be part of IceCa
 
 - The first 348 alerts come from IceCat-1 (up to RUNID=138449 and EVENTNUM=20481611): https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/SCRUCD
 - New alerts start from the gold alert of the 27th October 2023, with RUNID=138487 and EVENTNUM=60138479. Originally, in total these were 26, but one of those has been retracted (https://gcn.nasa.gov/circulars/37794); hence at the end we have 25 new alerts
+
+----
+
+Total number of alerts         = 374
+Number of alerts BEFORE I3Live = 207
+Number of alerts in I3Live     = 167
+
+Up to alert (run=138599, eventid=39138591, eventtime= 23/11/25 22:34:56.64 UT), truncated energy value (=AllDOMs) stored in AlertShortFollowupMsg is different from that calculated with icecat-2/get_truncated_energy_orig.py
+Starting from alert (run=138632, eventid=31747601, eventtime= 23/12/02 17:08:24.09 UT) the two values correspond.
+-----> Probably related to the switch to the new processing (most-up-to-date gcd automatically available)
