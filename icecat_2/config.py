@@ -1,4 +1,5 @@
 import os
+from pathlib import Path
 
 class config:
 
@@ -9,8 +10,8 @@ class config:
 
     te_orig_threshold   = 50000 ## GeV
 
-    workdir             = '/home/gsommani/IceCat-2/'
-
+    workdir = Path.cwd().parent
+    
     alerts_table_dir    = workdir+'/docs/'
     i3files_dir         = workdir+'output/'
     # Create the folder if it doesn't exist
