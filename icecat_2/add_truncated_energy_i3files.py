@@ -65,7 +65,7 @@ def add_truncated_energy_i3file(run, eventid, tag=''):
         "I3TimeWindowCleaning<I3RecoPulse>",
         "BaseProc_TimeWindowCleaning",
         InputResponse="SplitRTCleanedInIcePulses",
-        OutputResponse="l2_online_CleanedMuonPulses",
+        OutputResponse="OnlineL2_CleanedMuonPulses",
         TimeWindow=6000 * I3Units.ns,
     )
     tray.Add(
@@ -79,7 +79,7 @@ def add_truncated_energy_i3file(run, eventid, tag=''):
     tray.AddModule(
         "I3TruncatedEnergy",
         "truncated_energy",
-        RecoPulsesName="l2_online_CleanedMuonPulses",
+        RecoPulsesName="OnlineL2_CleanedMuonPulses",
         RecoParticleName="OnlineL2_SplineMPE",
         ResultParticleName="OnlineL2_SplineMPE_TruncatedEnergy",
         I3PhotonicsServiceName="PhotonicsService",
