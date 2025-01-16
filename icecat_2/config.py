@@ -19,6 +19,8 @@ class config:
 
     possible_keys = [
         'AlertShortFollowupMsg',
+        'BadDomsList',
+        'BadDomsListSLC',
         'DSTTriggers',
         'HESE_CausalQTot',
         'HESE_HomogenizedQTot',
