@@ -93,17 +93,20 @@ class GCD_Handler:
 def retrieve_old_i3file(
     run_id: int, event_id: int, output_str: str = ""
 ):
-    old_i3files = glob.glob(cfg.old_alerts_path + "*_scanned1024.i3.zst")
-    run_evt_path = f"{cfg.old_alerts_path}Run00{run_id}_event{event_id}_scanned1024.i3.zst"
-    run_path = f"{cfg.old_alerts_path}Run00{run_id}_scanned1024.i3.zst"
-    if run_evt_path in old_i3files:
-        alert_path = run_evt_path
-    elif run_path in old_i3files:
-        alert_path = run_path
+    if int(run_id) == cfg.run_exception and int(event_id) == cfg.event_exception:
+        alert_path = cfg.old_alerts_path_exception + 'Level2pass2_IC86.2013_data_Run00123986_Subrun00000000_00000212_event77999595.i3.zst'
     else:
-        raise ValueError(
-            f"Run {run_id} event {event_id} not in {cfg.old_alerts_path}"
-        )
+        old_i3files = glob.glob(cfg.old_alerts_path + "*_scanned1024.i3.zst")
+        run_evt_path = f"{cfg.old_alerts_path}Run00{run_id}_event{event_id}_scanned1024.i3.zst"
+        run_path = f"{cfg.old_alerts_path}Run00{run_id}_scanned1024.i3.zst"
+        if run_evt_path in old_i3files:
+            alert_path = run_evt_path
+        elif run_path in old_i3files:
+            alert_path = run_path
+        else:
+            raise ValueError(
+                f"Run {run_id} event {event_id} not in {cfg.old_alerts_path}"
+            )
     input_i3file = dataio.I3File(alert_path)
     output_i3file = dataio.I3File(cfg.i3files_dir+output_str, 'w')
     found_physics = False
