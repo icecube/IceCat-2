@@ -10,7 +10,7 @@ class config:
 
     te_orig_threshold   = 50000 ## GeV
 
-    workdir = Path.cwd().parent
+    workdir = str(Path.cwd().parent)
     
     alerts_table_dir    = workdir+'/docs/'
     i3files_dir         = workdir+'output/'
