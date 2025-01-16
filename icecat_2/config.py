@@ -5,6 +5,7 @@ class config:
     baseline_gcd_path   = '/data/user/followup/baseline_gcds/'
     splines_tables_path = '/cvmfs/icecube.opensciencegrid.org/data/photon-tables/splines/'
     old_alerts_path = '/data/ana/realtime/alert_catalog_v2/i3_files/'
+    new_alerts_path = '/data/ana/realtime/alert_catalog_v3/'
 
     te_orig_threshold   = 50000 ## GeV
 
