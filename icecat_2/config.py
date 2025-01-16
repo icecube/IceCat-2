@@ -32,6 +32,7 @@ class config:
         'I3EventHeader',
         'I3Geometry',
         'I3SuperDST',
+        'I3SuperDSTUnChargeCorrected',
         'InIceDSTPulses',
         'OnlineL2_BestFit',
         'OnlineL2_SplineMPE',
