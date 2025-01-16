@@ -134,7 +134,7 @@ def retrieve_old_i3file(
             for key_in_frame in frame.keys():
                 if key_in_frame.split("/")[0] == "__old__":
                     new_key_in_frame = key_in_frame.split("/")[-1]
-                    if new_key_in_frame in cfg.possible_keys:
+                    if new_key_in_frame in cfg.possible_keys and not frame.Has(new_key_in_frame):
                         if not new_key_in_frame in inserted_keys:
                             frame.Put(
                                 new_key_in_frame,
