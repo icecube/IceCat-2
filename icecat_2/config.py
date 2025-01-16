@@ -6,8 +6,12 @@ class config:
     baseline_gcd_path   = '/data/user/followup/baseline_gcds/'
     splines_tables_path = '/cvmfs/icecube.opensciencegrid.org/data/photon-tables/splines/'
     old_alerts_path = '/data/ana/realtime/alert_catalog_v2/i3_files/'
+    old_alerts_path_exception = '/data/ana/realtime/alert_catalog_v2/input_files/'
     new_alerts_path = '/data/ana/realtime/alert_catalog_v3/'
 
+    run_exception = 123986
+    event_exception = 77999595
+    
     te_orig_threshold   = 50000 ## GeV
 
     workdir = str(Path.cwd().parent)
