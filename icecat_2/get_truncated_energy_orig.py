@@ -2,7 +2,6 @@ from icecube.icetray import I3Tray, I3Units, I3Frame
 import os
 from os import listdir
 from os.path import isfile, join
-
 from icecube import (
     dataclasses,
     DomTools,
@@ -27,10 +26,10 @@ from icecube.STTools.seededRT.configuration_services import I3DOMLinkSeededRTCon
 import config
 cfg = config.config()
 
-def add_truncated_energy_orig_i3file(run, eventid):
+def add_truncated_energy_orig_i3file(run, eventid, tag=''):
 
-    input_file  = cfg.i3files_dir+'run'+str(run)+'_eventid'+str(eventid)+'.i3'
-    output_file = cfg.i3files_dir+'run'+str(run)+'_eventid'+str(eventid)+'_v2.i3'
+    input_file  = cfg.i3files_dir+'run'+str(run)+'_eventid'+str(eventid)+'_'+tag+'.i3'
+    output_file = cfg.i3files_dir+'run'+str(run)+'_eventid'+str(eventid)+'_'+tag+'_te.i3'
 
     amplitudetable = cfg.splines_tables_path+"InfBareMu_mie_abs_z20a10_V2.fits"
     timingtable = cfg.splines_tables_path+"InfBareMu_mie_prob_z20a10_V2.fits"
@@ -51,7 +50,8 @@ def add_truncated_energy_orig_i3file(run, eventid):
     tray.AddModule(
         "I3SeededRTCleaning_RecoPulseMask_Module",
         "BaseProc_RTCleaning",
-        InputHitSeriesMapName="SplitInIcePulses",
+        #InputHitSeriesMapName="SplitInIcePulses",
+        InputHitSeriesMapName="InIceDSTPulses",
         OutputHitSeriesMapName="SplitRTCleanedInIcePulses",
         STConfigService=seededRTConfig,
         SeedProcedure="HLCCoreHits",
@@ -60,6 +60,7 @@ def add_truncated_energy_orig_i3file(run, eventid):
         Streams=[I3Frame.Physics],
     )
 
+    
     tray.AddModule(
         "I3TimeWindowCleaning<I3RecoPulse>",
         "BaseProc_TimeWindowCleaning",
