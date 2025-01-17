@@ -17,7 +17,7 @@ class config:
     workdir = str(Path.cwd().parent)
     
     alerts_table_dir    = workdir+'/docs/'
-    i3files_dir         = workdir+'/output/'
+    i3files_dir         = '/data/user/gsommani/IceCat-2/output/'
     # Create the folder if it doesn't exist
     if not os.path.exists(i3files_dir):
         os.makedirs(i3files_dir)
@@ -46,7 +46,9 @@ class config:
         'OnlineL2_SplineMPE_Characteristics',
         'OnlineL2_SplineMPE_CramerRao_cr_azimuth',
         'OnlineL2_SplineMPE_CramerRao_cr_zenith',
-        'SplitInIcePulses',
-        'SplitInIcePulsesTimeRange',
+        'SplitInIceDSTPulses',
+        'SplitInIceDSTPulsesTimeRange',
+        'SplitUncleanedInIcePulses',
+        'SplitUncleanedInIcePulsesTimeRange',
         'Streams'
     ]

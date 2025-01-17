@@ -143,6 +143,10 @@ def retrieve_old_i3file(
             for key_in_frame in frame.keys():
                 if key_in_frame.split("/")[0] == "__old__":
                     new_key_in_frame = key_in_frame.split("/")[-1]
+                    if new_key_in_frame == "SplitInIceDSTPulses":
+                        new_key_in_frame = "SplitUncleanedInIcePulses"
+                    if new_key_in_frame == "SplitInIceDSTPulsesTimeRange":
+                        new_key_in_frame = "SplitUncleanedInIcePulsesTimeRange"
                     if new_key_in_frame in cfg.possible_keys and not frame.Has(new_key_in_frame):
                         if not new_key_in_frame in inserted_keys:
                             frame.Put(
@@ -236,8 +240,8 @@ def retrieve_i3file(run_id: int, event_id: int, output_str: str = ""):
                             frame.Delete(key)
                         ## I3RecoPulseSeriesMapMask can be "SplitUncleanedInIcePulses" or "SplitInIcePulses"
                         ## These lines uniformy the key (needed for truncated energy orig retrieval)
-                        if key == "SplitUncleanedInIcePulses":
-                            newkey = "SplitInIcePulses"
+                        if key == "SplitInIcePulses":
+                            newkey = "SplitUncleanedInIcePulses"
                             frame.Put(
                                 newkey,
                                 frame.Get(key)
