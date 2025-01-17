@@ -188,7 +188,7 @@ def retrieve_i3file(run_id: int, event_id: int, output_str: str = ""):
         #print('event_id: ', event_id)
         #print('Time: ', event["time"])
         if pending_event_id == event_id:
-            timestamp = event["time"]
+            timestamp = event["value"]["data"]["eventtime"].split('+')[0]
             try:
                 start = live_skymist.parse_date(timestamp) - timedelta(seconds=30)
                 stop = live_skymist.parse_date(timestamp) + timedelta(seconds=30)
