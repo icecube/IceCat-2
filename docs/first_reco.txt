@@ -1,3 +1,7 @@
+# These are the first events launched with new reco to be compared with millipede_original,
+# as event with run=139735 evtid=13003768 (last event in the list) was the last one before the upgrade of realtime reco algorithms
+# and event with run=138632 evtid=31747601 (first event in the list) is the first one after the new processing (introduced in Nov 2023)
+# In summary, the revised scans for these runs involved the usage of millipede_original, and as the new processing was already started, the current calculation of truncated energy uses updated gcd files
 # run evtid TE_ORIG[TeV] evttype stream
 138632 31747601 21.50089571828078 LED neutrino
 138669 4054005 20.58416533465316 LED neutrino
