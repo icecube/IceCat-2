@@ -127,6 +127,7 @@ def retrieve_old_i3file(
                 if is_exception and not first_physics_passed:
                     first_physics_passed = True
                     continue
+                frame["I3EventHeader"].sub_event_id = 0
                 filter_mask = frame["FilterMask"]
                 streams = []
                 passed_HESE = filter_mask["HESEFilter_15"].condition_passed
