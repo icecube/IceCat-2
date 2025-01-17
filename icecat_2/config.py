@@ -17,7 +17,7 @@ class config:
     workdir = str(Path.cwd().parent)
     
     alerts_table_dir    = workdir+'/docs/'
-    i3files_dir         = '/data/user/gsommani/IceCat-2/output/'
+    i3files_dir         = workdir+'/output/'
     # Create the folder if it doesn't exist
     if not os.path.exists(i3files_dir):
         os.makedirs(i3files_dir)
