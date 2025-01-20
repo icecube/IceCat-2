@@ -1,0 +1,45 @@
+
+# ICECAT-1: IceCube Event Catalog of Alert Tracks
+
+This catalog represents the first catalog of alerts from the IceCube Neutrino Gold and Bronze Track Alert program.  Each catalog entry represents a single neutrino event potentially of astrophysical origin. This catalog includes alerts issued in realtime via GCN notices/circulars, as well as events observed in IceCube since the start of data collection with the complete IceCube detector in 2011 that would have triggered an alert had the program been in operation.
+
+The events in this catalog consist of muon track events generated from the charge-current interaction of high-energy (greater than ~100 TeV) neutrino events observed in the IceCube Neutrino Observatory (https://icecube.wisc.edu) located beneath the geographic South Pole, Antarctica.  At these energies, neutrino events have a significant probability to be from an astrophysical source.  
+
+The best-fit direction is derived from an iterative maximum-likelihood scan of all potential event directions that is performed after the alert event is identified, and is published as an update for realtime alerts.  The directions and likelihood maps from this scan are used in this catalog.
+
+Additional information on the properties of this alert catalog can be found in publication: TBD
+
+# Contents
+
+Each alert catalog entry is represented by an entry in the summary CSV table, as well as complete FITS formatted file.
+
+For each event, the CSV table contains:
+ - RUNID,EVENTID: Unique RunID and EventID combination from IceCube DAQ system
+ - START,EVENTMJD: Date/time of event detection
+:q
+ - I3TYPE: Identification of event selection type (see supporting paper publication for details).  gfu-gold, gfu-bronze, ehe-gold, hese-gold, or hese-bronze types
+ - OTHER_I3TYPES: List of other I3TYPE event selection types this event additionally passed.
+ - RA,DEC [deg] (and _ERR): Best fit direction in J2000 equatorial coordinates, with asymmetric 90% CL error rectangle boundaries.
+ - ENERGY:[TeV] Most probable neutrino energy that would have produced this event.  Calculated assuming an E^(-2.19) astrophysical neutrino power law flux.
+ - FAR: [yr^(-1)] Rate of background events expected for alert events at this energy and sky location.
+ - SIGNAL: Probability event is of astrophysical origin, calculated assuming an E^(-2.19) astrophysical neutrino power law flux.
+ - *_SCR: Probabilities from post-alert convolutional neural network based classifier applied to each event to  better distinguish each events topological signal in the detector
+     - THRGOING_SCR: Primary event vertex outside is the detector and a muon-like track is observed passing through the instrumented volume
+     - START_SCR: Primary event vertex is inside the instrumented volume and a muon-like track is seen
+     - CASCADE_SCR: Primary event vertex is inside the instrumented volume and a shower (non-muon-like track) is observed
+     - SKIMMING_SCR: Primary event vertex outside is the detector and little or no energy deposited within instrumented volume
+     - STOP_SCR: Primary event vertex outside is the detector and a muon-like track is observed stopping in the instrumented volume
+ - CR_VETO [Bool]: Significant in-time cosmic-ray shower activity detected in the surface IceTop array, indicating this event is likely a background event.  
+     - Note: at time of alert creation this was not available, and therefore events have been evaluated and tagged after fact rather than removed. 
+
+For each event, a FITS file (included in per-year tar archive files) are provided that include:
+ - A full FITS header including the information from the CSV table above.
+ - Directional reconstruction likelihood value in Healpix binned directions that can be used to extract detailed error contours, where the LLH values have been scaled such that the best-fit location corresponds to the pixel with an LLH of zero (Delta-LLH)
+     - Delta-LLH values (per-bin LLH - best fit LLH value) corresponding to 50% and 90% containment regions are included in FITS file header notes.
+
+# References
+  - https://gcn.gsfc.nasa.gov/amon_icecube_gold_bronze_events.html
+  - https://gcn.gsfc.nasa.gov/doc/IceCube_High_Energy_Neutrino_Track_Alerts_v2.pdf
+
+# Contact
+- analysis@icecube.wisc.edu

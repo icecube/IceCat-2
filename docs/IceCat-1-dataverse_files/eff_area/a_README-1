@@ -1,0 +1,22 @@
+Effective areas for IceCube Realtime Track Neutrino alerts
+
+Effective areas are a useful quantity for categorizing the overall sensitivity of a neutrino detector like IceCube, including triggering and event selection effects.  Given it's position at the South Pole, all variation in sensitivity can be quanitified in neutrino energy and declination.
+
+Additional information on calculation and use of effective areas can be found:
+"All-sky Search for Time-integrated Neutrino Emission from Astrophysical Sources with 7 yr of IceCube Data"
+Citation: M. G. Aartsen et al 2017 ApJ 835 151
+DOI: 10.3847/1538-4357/835/2/151
+
+We quantify the effective area separately for each of the IceCube internal event selections that contribute to the effective area. Details on each of these selection is in the supporting catalog paper:
+* Effa_gfugold.txt - GFU Gold seletion
+* Effa_ehegold.txt - EHE Gold selection
+* Effa_hesegold.txt - HESE Gold selection
+* Effa_gfubronze.txt - GFU Bronze selection
+* Effa_hesebronze.txt - HESE Bronze selection
+
+As the combination of these alerts with properly accounting for overlap of events in selections, we also provide the effective areas for the combined selection at the Gold level selections and the Gold + Bronze level selections, which serve as good representations of the overall sensitivty of the alert selections:
+* Effa_all_streams_gold_only.txt - Overall GOLD selection effective areas
+* Effa_all_streams_gold_bronze.txt - Overall GOLD+BRONZE selection effective areas
+
+These effective areas are binned in neutrino energy (10 TeV - 500 PeV) and in broad declination (stored internally in the files as local zenith angle) bins that reflect the major changes in effective area due to background rejection in the down-going direction and Earth absorption at higher energies for the up-going directions.
+* Declination boundaries (90 deg, 30 deg, 0 deg, -5 deg, -30 deg, -90 deg)
