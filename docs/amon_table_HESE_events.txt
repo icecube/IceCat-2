@@ -1,3 +1,18 @@
+#############################################################################################################################################################################################
+# Website url: https://gcn.gsfc.nasa.gov/amon_hese_events.html													    #
+# These columns contain:
+#      the NoticeType is HESE,
+#      the RA is the RA location of the event (J2000 epoch) in units of degrees,
+#      the Dec is the Dec location of the event (J2000 epoch) in units of degrees,
+#      the Error is the location uncertainty (radius, 50% containment) in units of arcmin,
+#      the False_Pos (False Positive probability) specifies how often a trigger of this intensity would happen from just noise fluctuations (an identically 0 value means it was not calculated),
+#      the P-value is a chance probability of alert being an atmospheric neutrino. Low p-value (p<0.0027 (3 sigma) indicates a given alert is less likely to be background. The range is from 0 to 1 (an identically 0 value means it was not calculated; a value larger than 1 indicates a test alert),
+#      the Charge is the estimated number of photoelectrons in the PMTs,
+#      the SignalTr (Signal-Trackness) contains the probability that the neutrino event is signal-like and track-like (ie not a cascade); the range is 0.0 to 1.0,
+#      the N_events is the number of neutrinos that occured in the delta_T window (which for HESE notices is always 1),
+#      the Stream is the index number identifying the analaysis stream that produced this trigger event,
+#      the Comments from the full-format email respective Notices.
+#############################################################################################################################################################################################
 #EventNum 	RunNum	Date		Time UT		NoticeType	RA		Dec		Error	False _Pos	Pvalue		Charge		SignalTr	N _Events	Stream	Comments
 41485283 	132628	19/05/29	01:55:22.21	HESE		287.3190	+78.1432	534.00	1.0000e+00	0.0000e+00	11121.70	0.53		1		1	AMON_ICECUBE_HESE
 766165 		132518	19/05/04	18:25:18.39	HESE		65.7866		-37.4431	73.79	0.0000e+00	0.0000e+00	7328.35		0.63		1		1	AMON_ICECUBE_HESE
