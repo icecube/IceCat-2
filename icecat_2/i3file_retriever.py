@@ -159,11 +159,18 @@ def retrieve_old_i3file(
                     frame.Delete(key_in_frame)
                 elif key_in_frame not in cfg.possible_keys:
                     frame.Delete(key_in_frame)
-                elif key_in_frame not in inserted_keys:
-                    if new_key_in_frame == "SplitInIceDSTPulses":
-                        new_key_in_frame = "SplitUncleanedInIcePulses"
-                    if new_key_in_frame == "SplitInIceDSTPulsesTimeRange":
-                        new_key_in_frame = "SplitUncleanedInIcePulsesTimeRange"
+                elif key_in_frame not in inserted_keys:                    
+                    if key_in_frame == "SplitInIceDSTPulses":
+                        element = frame.Get(key_in_frame)
+                        frame.Delete(key_in_frame)
+                        key_in_frame = "SplitUncleanedInIcePulses"
+                    elif key_in_frame == "SplitInIceDSTPulsesTimeRange":
+                        element = frame.Get(key_in_frame)
+                        frame.Delete(key_in_frame)
+                        key_in_frame = "SplitUncleanedInIcePulsesTimeRange"
+                    else:
+                        element = frame.Get(key_in_frame)
+                        frame.Delete(key_in_frame)
                     element = frame.Get(key_in_frame)
                     frame.Delete(key_in_frame)
                     frame.Put(
