@@ -1,5 +1,5 @@
 #############################################################################################################################################################################################
-# Website url: https://gcn.gsfc.nasa.gov/amon_hese_events.html													    #
+# Website url: https://gcn.gsfc.nasa.gov/amon_hese_events.html													    
 # These columns contain:
 #      the NoticeType is HESE,
 #      the RA is the RA location of the event (J2000 epoch) in units of degrees,
