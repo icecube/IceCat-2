@@ -102,6 +102,8 @@ def retrieve_old_i3file(
         old_i3files = glob.glob(cfg.old_alerts_path + "*_scanned1024.i3.zst")
         run_evt_path = f"{cfg.old_alerts_path}Run00{run_id}_event{event_id}_scanned1024.i3.zst"
         run_path = f"{cfg.old_alerts_path}Run00{run_id}_scanned1024.i3.zst"
+        if int(run_id) == cfg.run_exception_double_event and int(event_id) == cfg.event_exception_double_event:
+            run_path = f"{cfg.old_alerts_path}Run00{run_id}_event2_scanned1024.i3.zst"
         if run_evt_path in old_i3files:
             alert_path = run_evt_path
         elif run_path in old_i3files:
@@ -159,18 +161,7 @@ def retrieve_old_i3file(
                     frame.Delete(key_in_frame)
                 elif key_in_frame not in cfg.possible_keys:
                     frame.Delete(key_in_frame)
-                elif key_in_frame not in inserted_keys:                    
-                    if key_in_frame == "SplitInIceDSTPulses":
-                        element = frame.Get(key_in_frame)
-                        frame.Delete(key_in_frame)
-                        key_in_frame = "SplitUncleanedInIcePulses"
-                    elif key_in_frame == "SplitInIceDSTPulsesTimeRange":
-                        element = frame.Get(key_in_frame)
-                        frame.Delete(key_in_frame)
-                        key_in_frame = "SplitUncleanedInIcePulsesTimeRange"
-                    else:
-                        element = frame.Get(key_in_frame)
-                        frame.Delete(key_in_frame)
+                elif key_in_frame not in inserted_keys:
                     element = frame.Get(key_in_frame)
                     frame.Delete(key_in_frame)
                     frame.Put(

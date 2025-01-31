@@ -9,8 +9,13 @@ class config:
     old_alerts_path_exception = '/data/ana/realtime/alert_catalog_v2/input_files/'
     new_alerts_path = '/data/ana/realtime/alert_catalog_v3/'
 
-    run_exception = 123986
+    ## 1st exception: another folder to be used
+    run_exception   = 123986 
     event_exception = 77999595
+
+    ## 2nd exception: different namefile in the folder    
+    run_exception_double_event   = 118973
+    event_exception_double_event = 25391094
     
     te_orig_threshold   = 50000 ## GeV
 
@@ -46,9 +51,12 @@ class config:
         'OnlineL2_SplineMPE_Characteristics',
         'OnlineL2_SplineMPE_CramerRao_cr_azimuth',
         'OnlineL2_SplineMPE_CramerRao_cr_zenith',
-        'SplitInIceDSTPulses',
-        'SplitInIceDSTPulsesTimeRange',
-        'SplitUncleanedInIcePulses',
-        'SplitUncleanedInIcePulsesTimeRange',
+        'SplitInIcePulses',
+        'SplitInIcePulsesTimeRange',
         'Streams'
     ]
+
+    fits_icecat1 = "/data/user/azegarelli/IceCat-2-fits-file-icecat1/docs/IceCat-1-dataverse_files/fits/"
+    runs_icecat1_millipede_wilks   = [137668, 138181, 135908, 136260, 137467]
+    events_icecat1_millipede_wilks = [51133257, 66037171, 43512334, 4895987, 64735045]
+
