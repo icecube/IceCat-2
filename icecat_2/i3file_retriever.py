@@ -103,6 +103,9 @@ def filter_func(
     if isinstance(input_path, str):
         input_path = [input_path]
 
+    def debug_func():
+        print("Finished with wavedeform")
+        
     tray.Add('I3Reader', Filenamelist=input_path)
     tray.Add(
         function,
@@ -127,7 +130,9 @@ def filter_func(
         'I3PMTSaturationFlagger',
         If=lambda f: f.Has(_raw)
     )
-
+    tray.Add(
+        debug_func
+    )
     tray.Add(
         'I3Writer',
         'writer',
