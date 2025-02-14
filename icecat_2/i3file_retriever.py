@@ -149,8 +149,8 @@ def filter_event(
     def is_event(frame):
         return (
             frame.Has('I3EventHeader') and
-            frame['I3EventHeader'].run_id == run and
-            frame['I3EventHeader'].event_id == event
+            frame['I3EventHeader'].run_id == run_id and
+            frame['I3EventHeader'].event_id == event_id
         )
 
     filter_func(input_path, output_path, is_event)
