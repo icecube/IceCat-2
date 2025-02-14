@@ -9,13 +9,17 @@ class config:
     old_alerts_path_exception = '/data/ana/realtime/alert_catalog_v2/input_files/'
     new_alerts_path = '/data/ana/realtime/alert_catalog_v3/'
 
-    ## 1st exception: another folder to be used
+    ## 1st exception: another folder to be used and subevent 1 to be used !!!
     run_exception   = 123986 
     event_exception = 77999595
 
     ## 2nd exception: different namefile in the folder    
     run_exception_double_event   = 118973
     event_exception_double_event = 25391094
+
+    ## 3rd exception: strange reco
+    run_exception_strange_reco = 130684
+    event_exception_strange_reco = 80612787
     
     te_orig_threshold   = 50000 ## GeV
 
@@ -23,6 +27,7 @@ class config:
     
     alerts_table_dir    = workdir+'/docs/'
     i3files_dir         = workdir+'/output/'
+    #i3files_dir = '/data/user/gsommani/IceCat-2/output/'
     # Create the folder if it doesn't exist
     if not os.path.exists(i3files_dir):
         os.makedirs(i3files_dir)

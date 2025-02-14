@@ -94,10 +94,14 @@ def retrieve_old_i3file(
     run_id: int, event_id: int, output_str: str = ""
 ):
     is_exception = False
+    first_physics_passed = True
     if int(run_id) == cfg.run_exception and int(event_id) == cfg.event_exception:
         alert_path = cfg.old_alerts_path_exception + 'Level2pass2_IC86.2013_data_Run00123986_Subrun00000000_00000212_event77999595.i3.zst'
         is_exception = True
         first_physics_passed = False
+    #elif int(run_id) == cfg.run_exception_strange_reco and int(event_id) == cfg.event_exception_strange_reco:
+    #    alert_path = cfg.old_alerts_path_exception + 'Level2_IC86.2017_data_Run00130684_Subrun00000000_00000260_event80612787.i3.zst'
+    #    is_exception = True
     else:
         old_i3files = glob.glob(cfg.old_alerts_path + "*_scanned1024.i3.zst")
         run_evt_path = f"{cfg.old_alerts_path}Run00{run_id}_event{event_id}_scanned1024.i3.zst"
@@ -118,6 +122,7 @@ def retrieve_old_i3file(
     inserted_keys = []
     for frame in input_i3file:
         if not found_physics: print(frame.Stop)
+        '''
         if frame.Stop in [
             icetray.I3Frame.Geometry,
             icetray.I3Frame.Calibration,
@@ -125,11 +130,23 @@ def retrieve_old_i3file(
             icetray.I3Frame.DAQ,
             icetray.I3Frame.Physics
         ] and not found_physics:
+        '''
+        if not found_physics:
+            if frame.Stop == icetray.I3Frame.Stream('p'):
+                event_header = frame["I3EventHeader"]
+                continue
             if frame.Stop == icetray.I3Frame.Physics:
                 if is_exception and not first_physics_passed:
                     first_physics_passed = True
                     continue
-                frame["I3EventHeader"].sub_event_id = 0
+                if not is_exception:
+                    #frame["I3EventHeader"].sub_event_id = 0
+                    frame.Delete("I3EventHeader")
+                    frame.Put("I3EventHeader",
+                              event_header,
+                              frame.Stop)
+                elif is_exception:
+                    if int(run_id) == cfg.run_exception and int(event_id) == cfg.event_exception: frame["I3EventHeader"].sub_event_id = 1
                 filter_mask = frame["FilterMask"]
                 streams = []
                 passed_HESE = filter_mask["HESEFilter_15"].condition_passed
