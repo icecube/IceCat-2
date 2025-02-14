@@ -194,7 +194,7 @@ def retrieve_i3file_pass2_multi(
     run_id: int, event_id: int, output_str: str = ""
 ):
     pool = multiprocessing.Pool(16)
-    pool.map(etrieve_i3file_pass2, (run_id, event_id, output_str))
+    pool.map(retrieve_i3file_pass2, (run_id, event_id, output_str))
 
 def retrieve_old_i3file(
     run_id: int, event_id: int, output_str: str = ""
