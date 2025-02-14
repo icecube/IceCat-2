@@ -102,9 +102,6 @@ def filter_func(
     tray = I3Tray()
     if isinstance(input_path, str):
         input_path = [input_path]
-
-    def debug_func():
-        print("Finished with wavedeform")
         
     tray.Add('I3Reader', Filenamelist=input_path)
     tray.Add(
@@ -131,9 +128,6 @@ def filter_func(
         If=lambda f: f.Has(_raw)
     )
     tray.Add(
-        debug_func
-    )
-    tray.Add(
         'I3Writer',
         'writer',
         filename=output_path,
@@ -153,7 +147,6 @@ def filter_event(
 ):
     
     def is_event(frame):
-        print("Maremma bona Angela caa fai????")
         return (
             frame.Has('I3EventHeader') and
             frame['I3EventHeader'].run_id == run_id and
