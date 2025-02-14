@@ -5,6 +5,7 @@ from pathlib import Path
 import pickle
 import zlib
 import os
+import multiprocessing
 
 from icecube import (
     dataio,
@@ -97,7 +98,7 @@ def filter_func(
     function=lambda frame:True,
     filter_streams=[icetray.I3Frame.Physics, icetray.I3Frame.DAQ]
 ):
-    
+    print(f"Input path: {input_path}")
     tray = I3Tray()
     if isinstance(input_path, str):
         input_path = [input_path]
