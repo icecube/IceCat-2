@@ -88,7 +88,105 @@ class GCD_Handler:
         elif frame.Stop == icetray.I3Frame.DetectorStatus:
             self.prepare_detector_status(frame)
         return frame
-        
+
+
+def filter_func(
+    input_path,
+    output_path,
+    function=lambda frame:True,
+    filter_streams=[icetray.I3Frame.Physics, icetray.I3Frame.DAQ]
+):
+    
+    tray = I3Tray()
+    if isinstance(input_path, str):
+        input_path = [input_path]
+
+    tray.Add('I3Reader', Filenamelist=input_path)
+    tray.Add(
+        function,
+        streams=filter_streams
+    )
+    _raw = 'InIceRawData'
+    tray.Add(
+        'Delete',
+        keys=[
+            'CalibratedWaveformRange',
+            'CalibrationErrata',
+            'SaturationWindows'
+        ],
+        If=lambda f: f.Has(_raw)
+    )
+    tray.Add(
+        'I3WaveCalibrator',
+        Launches=_raw,
+        If=lambda f: f.Has(_raw)
+    )
+    tray.Add(
+        'I3PMTSaturationFlagger',
+        If=lambda f: f.Has(_raw)
+    )
+
+    tray.Add(
+        'I3Writer',
+        'writer',
+        filename=output_path,
+        streams=[
+            icetray.I3Frame.Geometry,
+            icetray.I3Frame.Calibration,
+            icetray.I3Frame.DetectorStatus,
+            icetray.I3Frame.Physics,
+            icetray.I3Frame.DAQ
+        ]
+    )
+    tray.Execute()
+
+
+def filter_event(
+    input_path, output_path, run_id, event_id
+):
+    
+    def is_event(frame):
+        return (
+            frame.Has('I3EventHeader') and
+            frame['I3EventHeader'].run_id == run and
+            frame['I3EventHeader'].event_id == event
+        )
+
+    filter_func(inp, out, is_event)
+
+    
+def retrieve_i3file_pass2(
+    run_id: int, event_id: int, output_str: str = ""
+):
+    
+    gcd = glob.glob(
+        f'{cfg.gcd_folders_l2p2b}Level2pass2b*_Run00{run_id}*_GCD.i3.zst'
+    )
+    if len(gcd) != 1:
+        print(
+            "WARN: number of GCD files matched for run "
+            f"{run_id} is {len(gcd)} which is not 1.. skipping"
+        )
+        return
+    else:
+        print(f'INFO: matched GCD file {gcd} for run {run_id}')
+
+    flist = glob.glob(
+        f'{cfg.run_folders_l2p2a}Run00{r}/Level2*_data_Run00{run_id}_*[0-9].i3.zst'
+    )
+    if len(flist) == 0:
+        flist = glob.glob(
+            f'{cfg.run_folders_l2}Run00{r}/Level2*_data_Run00{run_id}_*[0-9].i3.zst'
+        )
+    print(
+        f'INFO: number of files to search for {run_id} {event_id}: {len(flist)}'
+    )
+    filter_event(
+        gcd+flist,
+        cfg.i3files_dir+output_str,
+        run_id,
+        event_id
+    )
 
 def retrieve_old_i3file(
     run_id: int, event_id: int, output_str: str = ""

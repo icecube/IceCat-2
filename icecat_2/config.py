@@ -8,6 +8,9 @@ class config:
     old_alerts_path = '/data/ana/realtime/alert_catalog_v2/i3_files/'
     old_alerts_path_exception = '/data/ana/realtime/alert_catalog_v2/input_files/'
     new_alerts_path = '/data/ana/realtime/alert_catalog_v3/'
+    gcd_folders_l2p2b = "/data/ana/IceCube/20*/filtered/level2pass2b/GCD/"
+    run_folders_l2p2a = "/data/exp/IceCube/20*/filtered/level2pass2a/*/"
+    run_folders_l2 = "/data/exp/IceCube/20*/filtered/level2/*/"
 
     ## 1st exception: another folder to be used and subevent 1 to be used !!!
     run_exception   = 123986 
