@@ -172,11 +172,11 @@ def retrieve_i3file_pass2(
         print(f'INFO: matched GCD file {gcd} for run {run_id}')
 
     flist = glob.glob(
-        f'{cfg.run_folders_l2p2a}Run00{r}/Level2*_data_Run00{run_id}_*[0-9].i3.zst'
+        f'{cfg.run_folders_l2p2a}Run00{run_id}/Level2*_data_Run00{run_id}_*[0-9].i3.zst'
     )
     if len(flist) == 0:
         flist = glob.glob(
-            f'{cfg.run_folders_l2}Run00{r}/Level2*_data_Run00{run_id}_*[0-9].i3.zst'
+            f'{cfg.run_folders_l2}Run00{run_id}/Level2*_data_Run00{run_id}_*[0-9].i3.zst'
         )
     print(
         f'INFO: number of files to search for {run_id} {event_id}: {len(flist)}'
