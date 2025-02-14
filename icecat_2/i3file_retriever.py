@@ -157,9 +157,10 @@ def filter_event(
 
     
 def retrieve_i3file_pass2(
-    run_id: int, event_id: int, output_str: str = ""
+    tupl
 ):
     
+    run_id, event_id, output_str = tupl
     gcd = glob.glob(
         f'{cfg.gcd_folders_l2p2b}Level2pass2b*_Run00{run_id}*_GCD.i3.zst'
     )
@@ -188,6 +189,12 @@ def retrieve_i3file_pass2(
         run_id,
         event_id
     )
+
+def retrieve_i3file_pass2_multi(
+    run_id: int, event_id: int, output_str: str = ""
+):
+    pool = multiprocessing.Pool(16)
+    pool.map(etrieve_i3file_pass2, (run_id, event_id, output_str))
 
 def retrieve_old_i3file(
     run_id: int, event_id: int, output_str: str = ""
