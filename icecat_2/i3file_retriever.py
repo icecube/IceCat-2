@@ -152,7 +152,7 @@ def filter_event(
             frame['I3EventHeader'].event_id == event
         )
 
-    filter_func(inp, out, is_event)
+    filter_func(input_path, output_path, is_event)
 
     
 def retrieve_i3file_pass2(
