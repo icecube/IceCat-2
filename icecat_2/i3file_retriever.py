@@ -11,7 +11,8 @@ from icecube import (
     icetray,
     gulliver,
     recclasses,
-    dataclasses
+    dataclasses,
+    WaveCalibrator
 )
 from icecube.icetray import I3Tray
 from icecube.frame_object_diff.segments import uncompress
