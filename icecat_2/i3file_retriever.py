@@ -148,6 +148,7 @@ def filter_event(
 ):
     
     def is_event(frame):
+        print("Maremma bona Angela caa fai????")
         return (
             frame.Has('I3EventHeader') and
             frame['I3EventHeader'].run_id == run_id and
