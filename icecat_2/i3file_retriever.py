@@ -1,3 +1,4 @@
+import copy
 from datetime import timedelta
 import base64
 import glob
@@ -207,7 +208,7 @@ def retrieve_i3file_pass2(
     #    event_id
     #)
     n_processors = 16
-    flist_distr = [gcd for i in range(n_processors)]
+    flist_distr = [copy.copy(gcd) for i in range(n_processors)]
     print(flist_distr)
     max_len = 1
     index_distr = 0
