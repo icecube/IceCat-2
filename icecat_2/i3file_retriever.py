@@ -164,15 +164,24 @@ class EventFilter:
 
 
         def is_event(frame):
-            return (
-                frame.Has('I3EventHeader') and
+
+            run_evt_filter = (
+                frame.Has("I3EventHeader") and
                 frame['I3EventHeader'].run_id == self.run_id and
                 frame['I3EventHeader'].event_id == self.event_id
-                #frame.Has('SplitInIceDSTPulses') and
-                #( 
-                #    frame['FilterMask']["HESEFilter_15"].condition_passed or
-                #    frame['FilterMask']["GFUFilter_17"].condition_passed
-                #)
+            )
+            daq_filter = frame.Stop == icetray.I3Frame.DAQ
+            subevent_filter = (
+                frame.Has('SplitInIceDSTPulses') and
+                ( 
+                    frame['FilterMask']["HESEFilter_15"].condition_passed or
+                    frame['FilterMask']["GFUFilter_17"].condition_passed
+                )
+            )
+            
+            return (
+                run_evt_filter and
+                (daq_filter or subevent_filter)
             )
 
         self.filter_func(input_path, is_event)
