@@ -212,13 +212,14 @@ def retrieve_i3file_pass2(
     index_distr = 0
     for f in flist:
         flist_distr[index_distr].append(f)
-        print(index_distr, len(flist_distr))
+        print(index_distr, len(flist_distr[index_distr]))
         if len(flist_distr[index_distr]) > max_len:
             max_len = len(flist_distr[index_distr])
         index_distr += 1
         if index_distr/n_processors == 1 :
             index_distr = 0
     for index_distr, single_list in enumerate(flist_distr):
+        print(f"Final list number {index_distr}: {single_list}")
         if len(single_list) < max_len:
             flist_distr[index_distr].append(flist[-1])
     pool = multiprocessing.Pool(n_processors)
