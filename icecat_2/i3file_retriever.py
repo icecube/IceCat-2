@@ -200,7 +200,7 @@ def retrieve_i3file_pass2(
     #    event_id
     #)
     n_processors = 16
-    flist_distr = [[gcd] for i in range(n_processors)]
+    flist_distr = [gcd for i in range(n_processors)]
     max_len = 1
     index_distr = 0
     for f in flist:
