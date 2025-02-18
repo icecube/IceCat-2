@@ -162,7 +162,7 @@ class EventFilter:
                 frame['I3EventHeader'].event_id == self.event_id
             )
 
-        self.filter_func(input_path, self.output_path, is_event)
+        self.filter_func(input_path, is_event)
 
     
 def retrieve_i3file_pass2(
