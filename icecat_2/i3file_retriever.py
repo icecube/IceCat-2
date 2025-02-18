@@ -135,6 +135,9 @@ class EventFilter:
             If=lambda f: f.Has(_raw)
         )
         tray.Add(
+            self.delete_unnecessary_keys,
+        )
+        tray.Add(
             'I3WaveCalibrator',
             Launches=_raw,
             If=lambda f: f.Has(_raw)
@@ -157,6 +160,13 @@ class EventFilter:
         )
         tray.Execute()
 
+
+    def delete_unnecessary_keys(frame):
+        keys = frame.keys()
+        for key in keys:
+            if key not in cfg.possible_keys:
+                frame.Delete(key)
+    
 
     def filter_event(
         self, input_path

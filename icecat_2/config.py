@@ -39,6 +39,8 @@ class config:
         'AlertShortFollowupMsg',
         'BadDomsList',
         'BadDomsListSLC',
+        'CalibratedWaveformRange',
+        'CalibrationErrata',
         'DSTTriggers',
         'HESE_CausalQTot',
         'HESE_HomogenizedQTot',
@@ -52,6 +54,7 @@ class config:
         'I3SuperDST',
         'I3SuperDSTUnChargeCorrected',
         'InIceDSTPulses',
+        'InIceRawData',
         'OnlineL2_BestFit',
         'OnlineL2_SplineMPE',
         'OnlineL2_SplineMPEFitParams',
@@ -59,6 +62,7 @@ class config:
         'OnlineL2_SplineMPE_Characteristics',
         'OnlineL2_SplineMPE_CramerRao_cr_azimuth',
         'OnlineL2_SplineMPE_CramerRao_cr_zenith',
+        'SaturationWindows'
         'SplitInIcePulses',
         'SplitInIcePulsesTimeRange',
         'Streams'
