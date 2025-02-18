@@ -141,26 +141,29 @@ def filter_func(
     )
     tray.Execute()
 
-
-def filter_event(
-    input_path, output_path, run_id, event_id
-):
-    
-    def is_event(frame):
-        return (
-            frame.Has('I3EventHeader') and
-            frame['I3EventHeader'].run_id == run_id and
-            frame['I3EventHeader'].event_id == event_id
-        )
-
-    filter_func(input_path, output_path, is_event)
-
     
 def retrieve_i3file_pass2(
-    tupl
+    run_id, event_id, output_str
 ):
+
+    output_path = cfg.i3files_dir+output_str
+
     
-    run_id, event_id, output_str = tupl
+    def filter_event(
+        input_path
+    ):
+
+
+        def is_event(frame):
+            return (
+                frame.Has('I3EventHeader') and
+                frame['I3EventHeader'].run_id == run_id and
+                frame['I3EventHeader'].event_id == event_id
+            )
+
+        filter_func(input_path, output_path, is_event)
+
+
     gcd = glob.glob(
         f'{cfg.gcd_folders_l2p2b}Level2pass2b*_Run00{run_id}*_GCD.i3.zst'
     )
@@ -183,18 +186,32 @@ def retrieve_i3file_pass2(
     print(
         f'INFO: number of files to search for {run_id} {event_id}: {len(flist)}'
     )
-    filter_event(
-        gcd+flist,
-        cfg.i3files_dir+output_str,
-        run_id,
-        event_id
-    )
+    #filter_event(
+    #    gcd+flist,
+    #    cfg.i3files_dir+output_str,
+    #    run_id,
+    #    event_id
+    #)
+    n_processors = 16
+    flist_distr = [[gcd] for i in range(n_processors)]
+    max_len = 1
+    index_distr = 0
+    for f in flist:
+        flist_distr[index_distr].append(f)
+        if len(flist_distr[index_distr]) > max_len:
+            max_len = len(flist_distr[index_distr])
+        index_distr += 1
+        if index_distr/n_processors == 1 :
+            index_distr = 0
+    for index_distr, single_list in enumerate(flist_distr):
+        if len(single_list) < max_len:
+            flist_distr[index_distr].append(flist[-1])
+    pool = multiprocessing.Pool(n_processors)
+    pool.map(filter_event, flist_distr)
 
 def retrieve_i3file_pass2_multi(
     run_id: int, event_id: int, output_str: str = ""
 ):
-    pool = multiprocessing.Pool(16)
-    pool.map(retrieve_i3file_pass2, [(run_id, event_id, output_str)])
 
 def retrieve_old_i3file(
     run_id: int, event_id: int, output_str: str = ""
