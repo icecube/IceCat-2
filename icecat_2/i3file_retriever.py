@@ -92,77 +92,84 @@ class GCD_Handler:
         return frame
 
 
-def filter_func(
-    input_path,
-    output_path,
-    function=lambda frame:True,
-    filter_streams=[icetray.I3Frame.Physics, icetray.I3Frame.DAQ]
-):
-    print(f"Input path: {input_path}")
-    tray = I3Tray()
-    if isinstance(input_path, str):
-        input_path = [input_path]
-        
-    tray.Add('I3Reader', Filenamelist=input_path)
-    tray.Add(
-        function,
-        streams=filter_streams
-    )
-    _raw = 'InIceRawData'
-    tray.Add(
-        'Delete',
-        keys=[
-            'CalibratedWaveformRange',
-            'CalibrationErrata',
-            'SaturationWindows'
-        ],
-        If=lambda f: f.Has(_raw)
-    )
-    tray.Add(
-        'I3WaveCalibrator',
-        Launches=_raw,
-        If=lambda f: f.Has(_raw)
-    )
-    tray.Add(
-        'I3PMTSaturationFlagger',
-        If=lambda f: f.Has(_raw)
-    )
-    tray.Add(
-        'I3Writer',
-        'writer',
-        filename=output_path,
-        streams=[
-            icetray.I3Frame.Geometry,
-            icetray.I3Frame.Calibration,
-            icetray.I3Frame.DetectorStatus,
-            icetray.I3Frame.Physics,
-            icetray.I3Frame.DAQ
-        ]
-    )
-    tray.Execute()
+class EventFilter:
 
-    
-def retrieve_i3file_pass2(
-    run_id, event_id, output_str
-):
 
-    output_path = cfg.i3files_dir+output_str
+    def __init__(self, run_id, event_id, output_str):
+        self.run_id = run_id
+        self.event_id = event_id
+        self.output_path = cfg.i3files_dir + output_str
 
-    
+    def filter_func(
+        self,
+        input_path,
+        function=lambda frame:True,
+        filter_streams=[icetray.I3Frame.Physics, icetray.I3Frame.DAQ]
+    ):
+        print(f"Input path: {input_path}")
+        tray = I3Tray()
+        if isinstance(input_path, str):
+            input_path = [input_path]
+            
+        tray.Add('I3Reader', Filenamelist=input_path)
+        tray.Add(
+            function,
+            streams=filter_streams
+        )
+        _raw = 'InIceRawData'
+        tray.Add(
+            'Delete',
+            keys=[
+                'CalibratedWaveformRange',
+                'CalibrationErrata',
+                'SaturationWindows'
+            ],
+            If=lambda f: f.Has(_raw)
+        )
+        tray.Add(
+            'I3WaveCalibrator',
+            Launches=_raw,
+            If=lambda f: f.Has(_raw)
+        )
+        tray.Add(
+            'I3PMTSaturationFlagger',
+            If=lambda f: f.Has(_raw)
+        )
+        tray.Add(
+            'I3Writer',
+            'writer',
+            filename=self.output_path,
+            streams=[
+                icetray.I3Frame.Geometry,
+                icetray.I3Frame.Calibration,
+                icetray.I3Frame.DetectorStatus,
+                icetray.I3Frame.Physics,
+                icetray.I3Frame.DAQ
+            ]
+        )
+        tray.Execute()
+
+
     def filter_event(
-        input_path
+        self, input_path
     ):
 
 
         def is_event(frame):
             return (
                 frame.Has('I3EventHeader') and
-                frame['I3EventHeader'].run_id == run_id and
-                frame['I3EventHeader'].event_id == event_id
+                frame['I3EventHeader'].run_id == self.run_id and
+                frame['I3EventHeader'].event_id == self.event_id
             )
 
-        filter_func(input_path, output_path, is_event)
+        self.filter_func(input_path, self.output_path, is_event)
 
+    
+def retrieve_i3file_pass2(
+    run_id, event_id, output_str
+):
+
+    event_filter = EventFilter(run_id, event_id, output_str)
 
     gcd = glob.glob(
         f'{cfg.gcd_folders_l2p2b}Level2pass2b*_Run00{run_id}*_GCD.i3.zst'
@@ -207,11 +214,11 @@ def retrieve_i3file_pass2(
         if len(single_list) < max_len:
             flist_distr[index_distr].append(flist[-1])
     pool = multiprocessing.Pool(n_processors)
-    pool.map(filter_event, flist_distr)
+    pool.map(event_filter.filter_event, flist_distr)
 
-def retrieve_i3file_pass2_multi(
-    run_id: int, event_id: int, output_str: str = ""
-):
+#def retrieve_i3file_pass2_multi(
+#    run_id: int, event_id: int, output_str: str = ""
+#):
 
 def retrieve_old_i3file(
     run_id: int, event_id: int, output_str: str = ""
