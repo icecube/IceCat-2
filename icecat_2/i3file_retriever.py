@@ -208,9 +208,11 @@ def retrieve_i3file_pass2(
     #)
     n_processors = 16
     flist_distr = [gcd for i in range(n_processors)]
+    print(flist_distr)
     max_len = 1
     index_distr = 0
     for f in flist:
+        print(f)
         flist_distr[index_distr].append(f)
         print(index_distr, len(flist_distr[index_distr]))
         if len(flist_distr[index_distr]) > max_len:
