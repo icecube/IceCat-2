@@ -106,15 +106,22 @@ class EventFilter:
         function=lambda frame:True,
         filter_streams=[icetray.I3Frame.Physics, icetray.I3Frame.DAQ]
     ):
-        print(f"Input path: {input_path}")
+        print(f"Input path: (len {len(input_path)}) {input_path}")
         tray = I3Tray()
         if isinstance(input_path, str):
             input_path = [input_path]
+
+        def update(frame):
+            print("Now we reached this stage")
+            return
             
         tray.Add('I3Reader', Filenamelist=input_path)
         tray.Add(
             function,
             streams=filter_streams
+        )
+        tray.Add(
+            update
         )
         _raw = 'InIceRawData'
         tray.Add(
