@@ -212,6 +212,7 @@ def retrieve_i3file_pass2(
     index_distr = 0
     for f in flist:
         flist_distr[index_distr].append(f)
+        print(index_distr, len(flist_distr))
         if len(flist_distr[index_distr]) > max_len:
             max_len = len(flist_distr[index_distr])
         index_distr += 1
