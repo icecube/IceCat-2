@@ -167,7 +167,8 @@ class EventFilter:
             return (
                 frame.Has('I3EventHeader') and
                 frame['I3EventHeader'].run_id == self.run_id and
-                frame['I3EventHeader'].event_id == self.event_id
+                frame['I3EventHeader'].event_id == self.event_id and
+                frame.Has('SplitInIceDSTPulses')
             )
 
         self.filter_func(input_path, is_event)
