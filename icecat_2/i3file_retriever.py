@@ -167,7 +167,7 @@ class EventFilter:
             return (
                 frame.Has('I3EventHeader') and
                 frame['I3EventHeader'].run_id == self.run_id and
-                frame['I3EventHeader'].event_id == self.event_id and
+                frame['I3EventHeader'].event_id == self.event_id
                 #frame.Has('SplitInIceDSTPulses') and
                 #( 
                 #    frame['FilterMask']["HESEFilter_15"].condition_passed or
