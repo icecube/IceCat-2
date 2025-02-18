@@ -168,11 +168,11 @@ class EventFilter:
                 frame.Has('I3EventHeader') and
                 frame['I3EventHeader'].run_id == self.run_id and
                 frame['I3EventHeader'].event_id == self.event_id and
-                frame.Has('SplitInIceDSTPulses') and
-                ( 
-                    frame['FilterMask']["HESEFilter_15"].condition_passed or
-                    frame['FilterMask']["GFUFilter_17"].condition_passed
-                )
+                #frame.Has('SplitInIceDSTPulses') and
+                #( 
+                #    frame['FilterMask']["HESEFilter_15"].condition_passed or
+                #    frame['FilterMask']["GFUFilter_17"].condition_passed
+                #)
             )
 
         self.filter_func(input_path, is_event)
