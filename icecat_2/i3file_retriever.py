@@ -165,6 +165,7 @@ class EventFilter:
         tray.Add(
             'Delete',
             keys=[
+                'CalibratedWaveforms',
                 'CalibratedWaveformRange',
                 'CalibrationErrata',
                 'SaturationWindows'
@@ -195,6 +196,7 @@ class EventFilter:
         tray.Add(
             'I3WaveCalibrator',
             Launches=_raw,
+            Waveforms="CalibratedWaveforms",
             If=lambda f: f.Has(_raw)
         )
         tray.Add(
