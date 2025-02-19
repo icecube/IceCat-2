@@ -112,16 +112,34 @@ class EventFilter:
         if isinstance(input_path, str):
             input_path = [input_path]
 
+
         def update(frame):
             print("Now we reached this stage")
-            return    
-            
+            return
+
+
         def delete_unnecessary_keys(frame):
             keys = frame.keys()
             for key in keys:
                 if key not in cfg.possible_keys:
                     frame.Delete(key)
-            
+
+
+        def select_correct_pulses(frame):
+            if frame.Has("SplitInIceDSTPulses"):
+                frame.Put(
+                    "SplitUncleanedInIcePulses",
+                    frame.Get("SplitInIceDSTPulses"),
+                    frame.Stop
+                )
+            if frame.Has("SplitInIceDSTPulsesTimeRange"):
+                frame.Put(
+                    "SplitUncleanedInIcePulsesTimeRange",
+                    frame.Get("SplitInIceDSTPulsesTimeRange"),
+                    frame.Stop
+                )
+
+
         tray.Add('I3Reader', Filenamelist=input_path)
         tray.Add(
             function,
@@ -141,11 +159,18 @@ class EventFilter:
             If=lambda f: f.Has(_raw)
         )
         tray.Add(
-            delete_unnecessary_keys,
+            delete_correct_pulses,
             streams=[
                 icetray.I3Frame.Geometry,
                 icetray.I3Frame.Calibration,
                 icetray.I3Frame.DetectorStatus,
+                icetray.I3Frame.Physics,
+                icetray.I3Frame.DAQ
+            ],
+        )
+        tray.Add(
+            delete_unnecessary_keys,
+            streams=[
                 icetray.I3Frame.Physics,
                 icetray.I3Frame.DAQ
             ],
@@ -434,6 +459,13 @@ def retrieve_i3file(run_id: int, event_id: int, output_str: str = ""):
                         ## These lines uniformy the key (needed for truncated energy orig retrieval)
                         if key == "SplitInIcePulses":
                             newkey = "SplitUncleanedInIcePulses"
+                            frame.Put(
+                                newkey,
+                                frame.Get(key)
+                            )
+                            frame.Delete(key)
+                        if key == "SplitInIcePulsesTimeRange":
+                            newkey = "SplitUncleanedInIcePulsesTimeRange"
                             frame.Put(
                                 newkey,
                                 frame.Get(key)

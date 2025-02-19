@@ -63,8 +63,8 @@ class config:
         'OnlineL2_SplineMPE_CramerRao_cr_azimuth',
         'OnlineL2_SplineMPE_CramerRao_cr_zenith',
         'SaturationWindows'
-        'SplitInIcePulses',
-        'SplitInIcePulsesTimeRange',
+        'SplitUncleanedInIcePulses',
+        'SplitUncleanedInIcePulsesTimeRange',
         'Streams'
     ]
 
