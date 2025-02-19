@@ -141,13 +141,25 @@ class EventFilter:
                 )
 
 
+        def check_streams(frame):
+            filter_mask = frame["FilterMask"]
+            streams = []
+            passed_HESE = filter_mask["HESEFilter_15"].condition_passed
+            passed_GFU = filter_mask["GFUFilter_17"].condition_passed
+            if passed_GFU:
+                streams.append("neutrino")
+            if passed_HESE:
+                streams.append("HESE")
+            frame.Put(
+                "Streams",
+                dataclasses.I3VectorString(streams)
+            )
+
+
         tray.Add('I3Reader', Filenamelist=input_path)
         tray.Add(
             function,
             streams=filter_streams
-        )
-        tray.Add(
-            update
         )
         _raw = 'InIceRawData'
         tray.Add(
@@ -165,6 +177,10 @@ class EventFilter:
                 icetray.I3Frame.Physics,
                 icetray.I3Frame.DAQ
             ],
+        )
+        tray.Add(
+            check_streams,
+            streams=[icetray.I3Frame.Physics],
         )
         tray.Add(
             delete_unnecessary_keys,

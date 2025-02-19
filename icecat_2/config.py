@@ -42,6 +42,8 @@ class config:
         'CalibratedWaveformRange',
         'CalibrationErrata',
         'DSTTriggers',
+        'GoodRunEndTime',
+        'GoodRunStartTime',
         'HESE_CausalQTot',
         'HESE_HomogenizedQTot',
         'HESE_VHESelfVeto',
@@ -62,7 +64,7 @@ class config:
         'OnlineL2_SplineMPE_Characteristics',
         'OnlineL2_SplineMPE_CramerRao_cr_azimuth',
         'OnlineL2_SplineMPE_CramerRao_cr_zenith',
-        'SaturationWindows'
+        'SaturationWindows',
         'SplitUncleanedInIcePulses',
         'SplitUncleanedInIcePulsesTimeRange',
         'Streams'
