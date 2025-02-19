@@ -161,7 +161,7 @@ class EventFilter:
         tray.Execute()
 
 
-    def delete_unnecessary_keys(frame):
+    def delete_unnecessary_keys(self, frame):
         keys = frame.keys()
         for key in keys:
             if key not in cfg.possible_keys:
