@@ -142,6 +142,13 @@ class EventFilter:
         )
         tray.Add(
             delete_unnecessary_keys,
+            streams=[
+                icetray.I3Frame.Geometry,
+                icetray.I3Frame.Calibration,
+                icetray.I3Frame.DetectorStatus,
+                icetray.I3Frame.Physics,
+                icetray.I3Frame.DAQ
+            ],
         )
         tray.Add(
             'I3WaveCalibrator',
