@@ -114,7 +114,13 @@ class EventFilter:
 
         def update(frame):
             print("Now we reached this stage")
-            return
+            return    
+            
+        def delete_unnecessary_keys(frame):
+            keys = frame.keys()
+            for key in keys:
+                if key not in cfg.possible_keys:
+                    frame.Delete(key)
             
         tray.Add('I3Reader', Filenamelist=input_path)
         tray.Add(
@@ -135,7 +141,7 @@ class EventFilter:
             If=lambda f: f.Has(_raw)
         )
         tray.Add(
-            self.delete_unnecessary_keys,
+            delete_unnecessary_keys,
         )
         tray.Add(
             'I3WaveCalibrator',
@@ -159,13 +165,6 @@ class EventFilter:
             ]
         )
         tray.Execute()
-
-
-    def delete_unnecessary_keys(self, frame):
-        keys = frame.keys()
-        for key in keys:
-            if key not in cfg.possible_keys:
-                frame.Delete(key)
     
 
     def filter_event(
