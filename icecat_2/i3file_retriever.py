@@ -122,6 +122,7 @@ class EventFilter:
             keys = frame.keys()
             for key in keys:
                 if key not in cfg.possible_keys:
+                    print(f"Deleting {key}")
                     frame.Delete(key)
 
 
@@ -161,9 +162,6 @@ class EventFilter:
         tray.Add(
             select_correct_pulses,
             streams=[
-                icetray.I3Frame.Geometry,
-                icetray.I3Frame.Calibration,
-                icetray.I3Frame.DetectorStatus,
                 icetray.I3Frame.Physics,
                 icetray.I3Frame.DAQ
             ],
@@ -171,6 +169,9 @@ class EventFilter:
         tray.Add(
             delete_unnecessary_keys,
             streams=[
+                icetray.I3Frame.Geometry,
+                icetray.I3Frame.Calibration,
+                icetray.I3Frame.DetectorStatus,
                 icetray.I3Frame.Physics,
                 icetray.I3Frame.DAQ
             ],
