@@ -159,7 +159,7 @@ class EventFilter:
             If=lambda f: f.Has(_raw)
         )
         tray.Add(
-            delete_correct_pulses,
+            select_correct_pulses,
             streams=[
                 icetray.I3Frame.Geometry,
                 icetray.I3Frame.Calibration,
