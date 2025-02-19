@@ -497,6 +497,13 @@ def retrieve_i3file(run_id: int, event_id: int, output_str: str = ""):
                     )
 
             for frame in frames:
+
+                keys = frame.keys()
+                for key in keys:
+                    if key not in cfg.possible_keys:
+                        print(f"Deleting {key}")
+                        frame.Delete(key)
+
                 if frame.Stop == icetray.I3Frame.DAQ:
                     frame.Put("I3EventHeader", header)
                     frame.Delete("QI3EventHeader")
