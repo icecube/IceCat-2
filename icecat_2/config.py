@@ -47,6 +47,8 @@ class config:
         'Estres_HomogenizedQTot',
         'GoodRunEndTime',
         'GoodRunStartTime',
+        'HESE_CausalQTot',
+        'HESE_HomogenizedQTot',
         'HESE_VHESelfVeto',
         'HESE_VHESelfVetoVertexPos',
         'HESE_VHESelfVetoVertexTime',
