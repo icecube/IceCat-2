@@ -35,7 +35,7 @@ class config:
     if not os.path.exists(i3files_dir):
         os.makedirs(i3files_dir)
 
-    key_passedfilters = 'AlertNamesPassed'
+    key_passedfilters = 'AlertNamesPassed_IceCat2'
 
     possible_keys = [
         'AlertShortFollowupMsg',
