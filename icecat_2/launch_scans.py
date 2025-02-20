@@ -13,13 +13,13 @@ i3file = dataio.I3File(filepath)
 is_HED = False
 for frame in i3file:
     if frame.Stop == icetray.I3Frame.Physics:
-        if frame.Has("Streams"):
-            streams = frame.Get("Streams")
+        if frame.Has(cfg.key_passedfilters):
+            streams = frame.Get(cfg.key_passedfilters)
             print(streams)
             if "HESE" in streams:
                 is_HED = True
         else:
-            raise ValueError("The i3 file has not Streams in it!")
+            raise ValueError(f"The i3 file has not {cfg.key_passedfilters} in it!")
         if frame.Has("OnlineL2_SplineMPE_TruncatedEnergy_ORIG_Muon"):
             te_orig = frame.Get("OnlineL2_SplineMPE_TruncatedEnergy_ORIG_Muon")
             te_orig_value = te_orig.energy

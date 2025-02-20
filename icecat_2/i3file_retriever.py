@@ -141,18 +141,18 @@ class EventFilter:
                 )
 
 
-        def check_streams(frame):
+        def check_filternames(frame):
             filter_mask = frame["FilterMask"]
-            streams = []
+            passedfilters = []
             passed_HESE = filter_mask["HESEFilter_15"].condition_passed
             passed_GFU = filter_mask["GFUFilter_17"].condition_passed
             if passed_GFU:
-                streams.append("neutrino")
+                passedfilters.append("neutrino")
             if passed_HESE:
-                streams.append("HESE")
+                passedfilters.append("HESE")
             frame.Put(
-                "Streams",
-                dataclasses.I3VectorString(streams)
+                cfg.key_passedfilters,
+                dataclasses.I3VectorString(passedfilters)
             )
 
 
@@ -180,7 +180,7 @@ class EventFilter:
             ],
         )
         tray.Add(
-            check_streams,
+            check_filternames,
             streams=[icetray.I3Frame.Physics],
         )
         tray.Add(
@@ -364,16 +364,16 @@ def retrieve_old_i3file(
                 elif is_exception:
                     if int(run_id) == cfg.run_exception and int(event_id) == cfg.event_exception: frame["I3EventHeader"].sub_event_id = 1
                 filter_mask = frame["FilterMask"]
-                streams = []
+                filternames = []
                 passed_HESE = filter_mask["HESEFilter_15"].condition_passed
                 passed_GFU = filter_mask["GFUFilter_17"].condition_passed
                 if passed_GFU:
-                    streams.append("neutrino")
+                    filternames.append("neutrino")
                 if passed_HESE:
-                    streams.append("HESE")
+                    filternames.append("HESE")
                 frame.Put(
-                    "Streams",
-                    dataclasses.I3VectorString(streams)
+                    cfg.key_passedfilters,
+                    dataclasses.I3VectorString(filternames)
                 )
                 found_physics = True
             for key_in_frame in frame.keys():
@@ -491,9 +491,17 @@ def retrieve_i3file(run_id: int, event_id: int, output_str: str = ""):
                             )
                             frame.Delete(key)
 
+                    filter_mask = frame["FilterMask"]
+                    filternames = []
+                    passed_HESE = filter_mask["HESEFilter_15"].condition_passed
+                    passed_GFU = filter_mask["GFUFilter_17"].condition_passed
+                    if passed_GFU:
+                        filternames.append("neutrino")
+                    if passed_HESE:
+                        filternames.append("HESE")
                     frame.Put(
-                        "Streams",
-                        dataclasses.I3VectorString(streams)
+                        cfg.key_passedfilters,
+                        dataclasses.I3VectorString(filternames)
                     )
 
             for frame in frames:

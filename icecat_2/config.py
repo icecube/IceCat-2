@@ -35,6 +35,8 @@ class config:
     if not os.path.exists(i3files_dir):
         os.makedirs(i3files_dir)
 
+    key_passedfilters = 'AlertNamesPassed'
+
     possible_keys = [
         'AlertShortFollowupMsg',
         'BadDomsList',
