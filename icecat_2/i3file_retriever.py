@@ -107,14 +107,14 @@ class EventFilter:
         function=lambda frame:True,
         filter_streams=[icetray.I3Frame.Physics, icetray.I3Frame.DAQ]
     ):
-        print(f"Input path: (len {len(input_path)}) {input_path}")
+        #print(f"Input path: (len {len(input_path)}) {input_path}")
         tray = I3Tray()
         if isinstance(input_path, str):
             input_path = [input_path]
 
 
         def update(frame):
-            print("Now we reached this stage")
+            #print("Now we reached this stage")
             return
 
 
@@ -122,7 +122,7 @@ class EventFilter:
             keys = frame.keys()
             for key in keys:
                 if key not in cfg.possible_keys:
-                    print(f"Deleting {key}")
+                    #print(f"Deleting {key}")
                     frame.Delete(key)
 
 
@@ -283,20 +283,20 @@ def retrieve_i3file_pass2(
     #)
     n_processors = 16
     flist_distr = [copy.copy(gcd) for i in range(n_processors)]
-    print(flist_distr)
+    #print(flist_distr)
     max_len = 1
     index_distr = 0
     for f in flist:
-        print(f)
+        #print(f)
         flist_distr[index_distr].append(f)
-        print(index_distr, len(flist_distr[index_distr]))
+        #print(index_distr, len(flist_distr[index_distr]))
         if len(flist_distr[index_distr]) > max_len:
             max_len = len(flist_distr[index_distr])
         index_distr += 1
         if index_distr/n_processors == 1 :
             index_distr = 0
     for index_distr, single_list in enumerate(flist_distr):
-        print(f"Final list number {index_distr}: {single_list}")
+        #print(f"Final list number {index_distr}: {single_list}")
         if len(single_list) < max_len:
             flist_distr[index_distr].append(flist[-1])
     pool = multiprocessing.Pool(n_processors)
@@ -403,7 +403,7 @@ def retrieve_old_i3file(
                         frame.Stop
                     )
                     inserted_keys.append(key_in_frame)
-            print(frame)
+            #print(frame)
             output_i3file.push(frame)
     output_i3file.close()
     print('Wrote', cfg.i3files_dir+output_str)
@@ -468,7 +468,7 @@ def retrieve_i3file(run_id: int, event_id: int, output_str: str = ""):
                         if key[:2] == "l2":
                             l2_name = key.split("online_")[-1]
                             newkey = "OnlineL2_" + l2_name
-                            print(key, newkey)
+                            #print(key, newkey)
                             frame.Put(
                                 newkey,
                                 frame.Get(key)
@@ -509,7 +509,7 @@ def retrieve_i3file(run_id: int, event_id: int, output_str: str = ""):
                 keys = frame.keys()
                 for key in keys:
                     if key not in cfg.possible_keys:
-                        print(f"Deleting {key}")
+                        #print(f"Deleting {key}")
                         frame.Delete(key)
 
                 if frame.Stop == icetray.I3Frame.DAQ:

@@ -50,7 +50,8 @@ def add_truncated_energy_i3file(run, eventid, tag=''):
     tray.AddModule(
         "I3SeededRTCleaning_RecoPulseMask_Module",
         "BaseProc_RTCleaning",
-        InputHitSeriesMapName="SplitUncleanedInIcePulses",
+        #InputHitSeriesMapName="SplitUncleanedInIcePulses",
+        InputHitSeriesMapName="InIceDSTPulses",
         OutputHitSeriesMapName="SplitRTCleanedInIcePulses",
         STConfigService=seededRTConfig,
         SeedProcedure="HLCCoreHits",
