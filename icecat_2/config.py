@@ -23,6 +23,8 @@ class config:
     ## 3rd exception: strange reco
     run_exception_strange_reco = 130684
     event_exception_strange_reco = 80612787
+
+    run_before_processing_update = 138599
     
     te_orig_threshold   = 50000 ## GeV
 
