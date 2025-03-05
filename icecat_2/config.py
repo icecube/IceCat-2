@@ -75,7 +75,7 @@ class config:
         'SaturationWindows',
         'SplitUncleanedInIcePulses',
         'SplitUncleanedInIcePulsesTimeRange',
-        'Streams'
+        key_passedfilters
     ]
 
     fits_icecat1 = "/data/user/azegarelli/IceCat-2-fits-file-icecat1/docs/IceCat-1-dataverse_files/fits/"
