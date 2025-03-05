@@ -127,16 +127,16 @@ class EventFilter:
 
 
         def select_correct_pulses(frame):
-            if frame.Has("SplitInIceDSTPulses"):
+            if frame.Has("SplitInIcePulses"):
                 frame.Put(
                     "SplitUncleanedInIcePulses",
-                    frame.Get("SplitInIceDSTPulses"),
+                    frame.Get("SplitInIcePulses"),
                     frame.Stop
                 )
-            if frame.Has("SplitInIceDSTPulsesTimeRange"):
+            if frame.Has("SplitInIcePulsesTimeRange"):
                 frame.Put(
                     "SplitUncleanedInIcePulsesTimeRange",
-                    frame.Get("SplitInIceDSTPulsesTimeRange"),
+                    frame.Get("SplitInIcePulsesTimeRange"),
                     frame.Stop
                 )
 
@@ -232,7 +232,7 @@ class EventFilter:
             )
             daq_filter = frame.Stop == icetray.I3Frame.DAQ
             subevent_filter = (
-                frame.Has('SplitInIceDSTPulses') and frame.Has('FilterMask') and
+                frame.Has('SplitInIcePulses') and frame.Has('FilterMask') and
                 ( 
                     frame['FilterMask']["HESEFilter_15"].condition_passed or
                     frame['FilterMask']["GFUFilter_17"].condition_passed
@@ -379,9 +379,9 @@ def retrieve_old_i3file(
             for key_in_frame in frame.keys():
                 if key_in_frame.split("/")[0] == "__old__":
                     new_key_in_frame = key_in_frame.split("/")[-1]
-                    if new_key_in_frame == "SplitInIceDSTPulses":
+                    if new_key_in_frame == "SplitInIcePulses":
                         new_key_in_frame = "SplitUncleanedInIcePulses"
-                    if new_key_in_frame == "SplitInIceDSTPulsesTimeRange":
+                    if new_key_in_frame == "SplitInIcePulsesTimeRange":
                         new_key_in_frame = "SplitUncleanedInIcePulsesTimeRange"
                     if new_key_in_frame in cfg.possible_keys and not frame.Has(new_key_in_frame):
                         if not new_key_in_frame in inserted_keys:
