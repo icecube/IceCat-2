@@ -5,24 +5,26 @@ class config:
 
     baseline_gcd_path   = '/data/user/followup/baseline_gcds/'
     splines_tables_path = '/cvmfs/icecube.opensciencegrid.org/data/photon-tables/splines/'
-    old_alerts_path = '/data/ana/realtime/alert_catalog_v2/i3_files/'
-    old_alerts_path_exception = '/data/ana/realtime/alert_catalog_v2/input_files/'
-    new_alerts_path = '/data/ana/realtime/alert_catalog_v3/'
+
     gcd_folders_l2p2b = "/data/ana/IceCube/20*/filtered/level2pass2b/GCD/"
     run_folders_l2p2a = "/data/exp/IceCube/20*/filtered/level2pass2a/*/"
     run_folders_l2 = "/data/exp/IceCube/20*/filtered/level2/*/"
 
+    ##########################################################################
+    ## This part needed for the "old" way to process i3 file (before Tianlu's script for GDG pass2)
+    old_alerts_path = '/data/ana/realtime/alert_catalog_v2/i3_files/'
+    old_alerts_path_exception = '/data/ana/realtime/alert_catalog_v2/input_files/'
+    new_alerts_path = '/data/ana/realtime/alert_catalog_v3/'
     ## 1st exception: another folder to be used and subevent 1 to be used !!!
     run_exception   = 123986 
     event_exception = 77999595
-
     ## 2nd exception: different namefile in the folder    
     run_exception_double_event   = 118973
     event_exception_double_event = 25391094
-
     ## 3rd exception: strange reco
     run_exception_strange_reco = 130684
     event_exception_strange_reco = 80612787
+    ##########################################################################
 
     run_before_processing_update = 138599
     
@@ -32,7 +34,7 @@ class config:
     
     alerts_table_dir    = workdir+'/docs/'
     i3files_dir         = workdir+'/output/'
-    #i3files_dir = '/data/user/gsommani/IceCat-2/output/'
+
     # Create the folder if it doesn't exist
     if not os.path.exists(i3files_dir):
         os.makedirs(i3files_dir)
