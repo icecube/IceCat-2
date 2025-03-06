@@ -445,7 +445,7 @@ def retrieve_i3file(run_id: int, event_id: int, output_str: str = ""):
             gcd_handler = GCD_Handler()
             frames = []
             text_frames = event['value']['data']['frames']
-            streams = event['value']['streams']
+            filternames = event['value']['streams']
             for frame_type, frame_content in text_frames:
                 frame = pickle.loads(zlib.decompress(base64.b64decode(frame_content)),
                                      encoding='bytes')
@@ -491,14 +491,6 @@ def retrieve_i3file(run_id: int, event_id: int, output_str: str = ""):
                             )
                             frame.Delete(key)
 
-                    filter_mask = frame["FilterMask"]
-                    filternames = []
-                    passed_HESE = filter_mask["HESEFilter_15"].condition_passed
-                    passed_GFU = filter_mask["GFUFilter_17"].condition_passed
-                    if passed_GFU:
-                        filternames.append("neutrino")
-                    if passed_HESE:
-                        filternames.append("HESE")
                     frame.Put(
                         cfg.key_passedfilters,
                         dataclasses.I3VectorString(filternames)
