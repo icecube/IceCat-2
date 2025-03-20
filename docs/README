@@ -8,7 +8,7 @@ If events with CR_VETO=True from IceCat-1 are included
 
 Total number of alerts         = 374
 Number of alerts BEFORE I3Live = 207
-Number of alerts in I3Live     = 167
+Number of alerts in I3Live     = 166
 
 Up to alert (run=138599, eventid=39138591, eventtime= 23/11/25 22:34:56.64 UT), truncated energy value (=AllDOMs) stored in AlertShortFollowupMsg is different from that calculated with icecat-2/get_truncated_energy_orig.py
 Starting from alert (run=138632, eventid=31747601, eventtime= 23/12/02 17:08:24.09 UT) the two values correspond.
@@ -27,6 +27,6 @@ Starting from alert (run=138632, eventid=31747601, eventtime= 23/12/02 17:08:24.
 133644 43767651
 ----
 Total number of alerts         = 366
-Number of alerts BEFORE I3Live = 201
+Number of alerts BEFORE I3Live = 200
 Number of alerts in I3Live     = 165
 ----
