@@ -72,6 +72,7 @@ class config:
         'OnlineL2_BestFit',
         'OnlineL2_BestFit_CramerRao_cr_azimuth',
         'OnlineL2_BestFit_CramerRao_cr_zenith',
+        'OnlineL2_HitStatisticsValuesIC',
         'OnlineL2_SplineMPE',
         'OnlineL2_SplineMPEFitParams',
         'OnlineL2_SplineMPE_Bootstrap_Angular',
