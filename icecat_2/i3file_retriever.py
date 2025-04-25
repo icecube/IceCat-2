@@ -93,18 +93,6 @@ class GCD_Handler:
             self.prepare_detector_status(frame)
         return frame
 
-    def SelectOnlyIceCubePulses(self, frame, pulses):
-        """Create a masked pulsemap which contains only IceCube DOMs."""
-        """From online filters."""
-        max_icecube_string = 78
-        mask = dataclasses.I3RecoPulseSeriesMapMask(
-            frame,
-            pulses,
-            lambda om, idx, pulse: om.string <= max_icecube_string
-        )  # noqa: ARG005
-        frame[pulses + "IC"] = mask
-        return True
-
 
 class EventFilter:
 
@@ -167,6 +155,18 @@ class EventFilter:
                 cfg.key_passedfilters,
                 dataclasses.I3VectorString(passedfilters)
             )
+
+        def SelectOnlyIceCubePulses(self, frame, pulses):
+            """Create a masked pulsemap which contains only IceCube DOMs."""
+            """From online filters."""
+            max_icecube_string = 78
+            mask = dataclasses.I3RecoPulseSeriesMapMask(
+                frame,
+                pulses,
+                lambda om, idx, pulse: om.string <= max_icecube_string
+            )  # noqa: ARG005
+            frame[pulses + "IC"] = mask
+            return True
 
 
         tray.Add('I3Reader', Filenamelist=input_path)
