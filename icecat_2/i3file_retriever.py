@@ -18,6 +18,7 @@ from icecube import (
 )
 from icecube.icetray import I3Tray
 from icecube.frame_object_diff.segments import uncompress
+from icecube.common_variables import hit_statistics
 
 from skymist import i3live
 
@@ -122,7 +123,7 @@ class EventFilter:
             keys = frame.keys()
             for key in keys:
                 if key not in cfg.possible_keys:
-                    #print(f"Deleting {key}")
+                    print(f"Deleting {key}")
                     frame.Delete(key)
 
 
@@ -168,7 +169,8 @@ class EventFilter:
                 'CalibratedWaveforms',
                 'CalibratedWaveformRange',
                 'CalibrationErrata',
-                'SaturationWindows'
+                'SaturationWindows',
+                'OnlineL2_HitStatisticsValuesIC',
             ],
             If=lambda f: f.Has(_raw)
         )
@@ -203,6 +205,18 @@ class EventFilter:
             'I3PMTSaturationFlagger',
             If=lambda f: f.Has(_raw)
         )
+
+        
+        tray.Add(
+            hit_statistics.I3HitStatisticsCalculatorSegment,
+            'OnlineL2_HitStatisticsValuesIC',
+            PulseSeriesMapName = 'OnlineL2_CleanedMuonPulses',
+            OutputI3HitStatisticsValuesName='OnlineL2_HitStatisticsValuesIC',
+            #BookIt=True,
+            #If=lambda f: If(f),
+        )
+        
+
         tray.Add(
             'I3Writer',
             'writer',
@@ -501,7 +515,7 @@ def retrieve_i3file(run_id: int, event_id: int, output_str: str = ""):
                 keys = frame.keys()
                 for key in keys:
                     if key not in cfg.possible_keys:
-                        #print(f"Deleting {key}")
+                        print(f"Deleting {key}")
                         frame.Delete(key)
 
                 if frame.Stop == icetray.I3Frame.DAQ:
