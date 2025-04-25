@@ -156,7 +156,7 @@ class EventFilter:
                 dataclasses.I3VectorString(passedfilters)
             )
 
-        def SelectOnlyIceCubePulses(self, frame, pulses):
+        def SelectOnlyIceCubePulses(frame, pulses):
             """Create a masked pulsemap which contains only IceCube DOMs."""
             """From online filters."""
             max_icecube_string = 78
