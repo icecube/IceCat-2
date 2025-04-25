@@ -73,6 +73,7 @@ class config:
         'OnlineL2_BestFit',
         'OnlineL2_BestFit_CramerRao_cr_azimuth',
         'OnlineL2_BestFit_CramerRao_cr_zenith',
+        'OnlineL2_CleanedMuonPulses',
         'OnlineL2_CleanedMuonPulsesIC',
         'OnlineL2_HitStatisticsValuesIC',
         'OnlineL2_SplineMPE',
