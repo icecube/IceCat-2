@@ -93,6 +93,18 @@ class GCD_Handler:
             self.prepare_detector_status(frame)
         return frame
 
+    def SelectOnlyIceCubePulses(self, frame, pulses):
+        """Create a masked pulsemap which contains only IceCube DOMs."""
+        """From online filters."""
+        max_icecube_string = 78
+        mask = dataclasses.I3RecoPulseSeriesMapMask(
+            frame,
+            pulses,
+            lambda om, idx, pulse: om.string <= max_icecube_string
+        )  # noqa: ARG005
+        frame[pulses + "IC"] = mask
+        return True
+
 
 class EventFilter:
 
@@ -206,13 +218,18 @@ class EventFilter:
             If=lambda f: f.Has(_raw)
         )
 
+        tray.Add(
+            SelectOnlyIceCubePulses,
+            "OnlineL2_SelectICPulses",
+            pulses="OnlineL2_CleanedMuonPulses"
+        )
         
         tray.Add(
             hit_statistics.I3HitStatisticsCalculatorSegment,
             'OnlineL2_HitStatisticsValuesIC',
-            PulseSeriesMapName = 'OnlineL2_CleanedMuonPulses',
+            PulseSeriesMapName='OnlineL2_CleanedMuonPulsesIC',
             OutputI3HitStatisticsValuesName='OnlineL2_HitStatisticsValuesIC',
-            #BookIt=True,
+            BookIt=True,
             #If=lambda f: If(f),
         )
         
