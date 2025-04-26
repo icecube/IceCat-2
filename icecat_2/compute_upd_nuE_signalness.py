@@ -1,6 +1,7 @@
 import numpy as np
 import os
 from os.path import isfile, join
+import csv
 
 from icecube.icetray import I3Tray, I3Units, I3Frame
 from icecube import (
@@ -70,7 +71,7 @@ def extract_qtot_from_i3file(infile):
                 alert_data = json.loads(alert_json)
                 return alert_data.get('qtot')
 
-print('run, evtid, ra, dec, zenith, azimuth, qtot, te_alldoms, te_orig, nu_energy, signalness')
+#print('run, evtid, ra, dec, zenith, azimuth, qtot, te_alldoms, te_orig, nu_energy, signalness')
 
 ##########################
 
@@ -102,7 +103,17 @@ def extract_info(run,eventid):
     nu_energy  = neutrino_energy(te_alldoms)
     sig        = signalness(zenith, dec, qtot, te_alldoms)[0]
 
-    print(run, eventid, round(ra,3), round(dec,3), round(zenith,3), round(azimuth,3), round(qtot,3), round(te_alldoms,3), round(te_orig,3), round(nu_energy,3), round(sig,3))
+    #print(run, eventid, round(ra,3), round(dec,3), round(zenith,3), round(azimuth,3), round(qtot,3), round(te_alldoms,3), round(te_orig,3), round(nu_energy,3), round(sig,3))
+    
+    output_csv = 'extracted_upd_alert_info.csv'
+    file_exists = os.path.isfile(output_csv)
+    with open(output_csv, mode='a', newline='') as file:
+        writer = csv.writer(file)
+        if not file_exists:
+            writer.writerow(['run', 'eventid', 'eventtime', 'mjd', 'ra [deg]', 'dec [deg]', 'nu_energy [TeV]', 'signalness'])
+        writer.writerow([run, eventid, eventtime, mjd, round(ra,3), round(dec,3), round(nu_energy/1000,3), round(sig,3)])
+
+#####################################################
 
 infile = cfg.alerts_table_dir+"alerts_no_i3live.csv"                
 run, eventid = np.loadtxt(infile, usecols=(0,1), unpack=True, dtype=int, delimiter=',')
