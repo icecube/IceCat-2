@@ -73,7 +73,8 @@ def add_truncated_energy_i3file(run, eventid, tag=''):
         Streams=[I3Frame.Physics],
     )
 
-    
+
+    # The map named 'OnlineL2_CleanedMuonPulses' doesn't exist in the frame since pass2 has been introduced
     if run>cfg.run_before_processing_update:
         
         tray.AddModule(
