@@ -107,9 +107,9 @@ def extract_info(run,eventid):
 infile = cfg.alerts_table_dir+"alerts_no_i3live.csv"                
 run, eventid = np.loadtxt(infile, usecols=(0,1), unpack=True, dtype=int, delimiter=',')
 for i in range(len(run)):    
-    extract_info(str(run[i]),str(eventid[i]),tag)
+    extract_info(str(run[i]),str(eventid[i]))
 
 infile = cfg.alerts_table_dir+"alerts_i3live.csv"
 run, eventid = np.loadtxt(infile, usecols=(0,1), unpack=True, dtype=int, delimiter=',')
 for i in range(len(run)):
-    extract_info(str(run[i]),str(eventid[i]),tag)
+    extract_info(str(run[i]),str(eventid[i]))
