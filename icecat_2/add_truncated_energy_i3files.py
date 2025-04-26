@@ -22,9 +22,22 @@ from icecube import (
     truncated_energy, 
 )
 from icecube.STTools.seededRT.configuration_services import I3DOMLinkSeededRTConfigurationService
+from icecube.common_variables import hit_statistics
 
 import config
 cfg = config.config()
+
+def SelectOnlyIceCubePulses(frame, pulses):
+    """Create a masked pulsemap which contains only IceCube DOMs."""
+    """From online filters."""
+    max_icecube_string = 78
+    mask = dataclasses.I3RecoPulseSeriesMapMask(
+        frame,
+        pulses,
+        lambda om, idx, pulse: om.string <= max_icecube_string
+    )  # noqa: ARG005                                                                                                    
+    frame[pulses + "IC"] = mask
+    return True
 
 def add_truncated_energy_i3file(run, eventid, tag=''):
 
@@ -50,7 +63,8 @@ def add_truncated_energy_i3file(run, eventid, tag=''):
     tray.AddModule(
         "I3SeededRTCleaning_RecoPulseMask_Module",
         "BaseProc_RTCleaning",
-        InputHitSeriesMapName="SplitUncleanedInIcePulses",
+        #InputHitSeriesMapName="SplitUncleanedInIcePulses",
+        InputHitSeriesMapName="InIceDSTPulses",
         OutputHitSeriesMapName="SplitRTCleanedInIcePulses",
         STConfigService=seededRTConfig,
         SeedProcedure="HLCCoreHits",
@@ -60,13 +74,33 @@ def add_truncated_energy_i3file(run, eventid, tag=''):
     )
 
     
-    tray.AddModule(
-        "I3TimeWindowCleaning<I3RecoPulse>",
-        "BaseProc_TimeWindowCleaning",
-        InputResponse="SplitRTCleanedInIcePulses",
-        OutputResponse="OnlineL2_CleanedMuonPulses",
-        TimeWindow=6000 * I3Units.ns,
-    )
+    if run>cfg.run_before_processing_update:
+        
+        tray.AddModule(
+            "I3TimeWindowCleaning<I3RecoPulse>",
+            "BaseProc_TimeWindowCleaning",
+            InputResponse="SplitRTCleanedInIcePulses",
+            OutputResponse="OnlineL2_CleanedMuonPulses",
+            TimeWindow=6000 * I3Units.ns,
+        )
+    
+    elif:
+
+        tray.Add(
+            SelectOnlyIceCubePulses,
+            "OnlineL2_SelectICPulses",
+            pulses="OnlineL2_CleanedMuonPulses"
+        )
+
+        tray.Add(
+            hit_statistics.I3HitStatisticsCalculatorSegment,
+            'OnlineL2_HitStatisticsValuesIC',
+            PulseSeriesMapName='OnlineL2_CleanedMuonPulsesIC',
+            OutputI3HitStatisticsValuesName='OnlineL2_HitStatisticsValuesIC',
+            BookIt=True,
+            #If=lambda f: If(f),
+        )
+    
     tray.Add(
         "I3PhotoSplineServiceFactory",
         "PhotonicsService",
