@@ -84,7 +84,7 @@ def add_truncated_energy_i3file(run, eventid, tag=''):
             TimeWindow=6000 * I3Units.ns,
         )
     
-    elif:
+    else:
 
         tray.Add(
             SelectOnlyIceCubePulses,
