@@ -76,8 +76,18 @@ print('run, evtid, ra, dec, zenith, azimuth, qtot, te_alldoms, te_orig, nu_energ
 
 def extract_info(run,eventid):
 
-    filename='run'+run+'_eventid'+eventid+'_old_pass2_te.i3'
-    #print(cfg.i3files_dir+filename)
+    filename_old   = f'run{run}_eventid{eventid}_old_pass2_te.i3'
+    filename_i3live = f'run{run}_eventid{eventid}_i3live_pass2_te.i3'
+
+    filepath_old = os.path.join(cfg.i3files_dir, filename_old)
+    filepath_i3live = os.path.join(cfg.i3files_dir, filename_i3live)
+
+    if os.path.exists(filepath_old):
+        filename = filename_old
+    elif os.path.exists(filepath_i3live):
+        filename = filename_i3live
+    else:
+        raise FileNotFoundError(f"No suitable i3 file found for run {run} and event ID {eventid}.")
 
     qtot                 = extract_qtot_from_i3file(filename)
     te_alldoms, te_orig  = extract_truncated_energies_from_i3file(filename)
@@ -92,16 +102,14 @@ def extract_info(run,eventid):
     nu_energy  = neutrino_energy(te_alldoms)
     sig        = signalness(zenith, dec, qtot, te_alldoms)[0]
 
-    print(str(run[i]), str(eventid[i]), round(ra,3), round(dec,3), round(zenith,3), round(azimuth,3), round(qtot,3), round(te_alldoms,3), round(te_orig,3), round(nu_energy,3), round(sig,3))
-
-
+    print(run, eventid, round(ra,3), round(dec,3), round(zenith,3), round(azimuth,3), round(qtot,3), round(te_alldoms,3), round(te_orig,3), round(nu_energy,3), round(sig,3))
 
 infile = cfg.alerts_table_dir+"alerts_no_i3live.csv"                
 run, eventid = np.loadtxt(infile, usecols=(0,1), unpack=True, dtype=int, delimiter=',')
 for i in range(len(run)):    
-    extract_info(str(run[i]),str(eventid[i]))
+    extract_info(str(run[i]),str(eventid[i]),tag)
 
 infile = cfg.alerts_table_dir+"alerts_i3live.csv"
 run, eventid = np.loadtxt(infile, usecols=(0,1), unpack=True, dtype=int, delimiter=',')
 for i in range(len(run)):
-    extract_info(str(run[i]),str(eventid[i]))
+    extract_info(str(run[i]),str(eventid[i]),tag)
