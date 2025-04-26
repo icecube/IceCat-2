@@ -104,14 +104,14 @@ def extract_info(run,eventid):
     sig        = signalness(zenith, dec, qtot, te_alldoms)[0]
 
     #print(run, eventid, round(ra,3), round(dec,3), round(zenith,3), round(azimuth,3), round(qtot,3), round(te_alldoms,3), round(te_orig,3), round(nu_energy,3), round(sig,3))
-    
+
     output_csv = 'extracted_upd_alert_info.csv'
     file_exists = os.path.isfile(output_csv)
     with open(output_csv, mode='a', newline='') as file:
         writer = csv.writer(file)
         if not file_exists:
-            writer.writerow(['run', 'eventid', 'eventtime', 'mjd', 'ra [deg]', 'dec [deg]', 'nu_energy [TeV]', 'signalness'])
-        writer.writerow([run, eventid, eventtime, mjd, round(ra,3), round(dec,3), round(nu_energy/1000,3), round(sig,3)])
+            writer.writerow(['RUNID', 'EVENTID', 'START', 'EVENTMJD', 'RA', 'DEC', 'ENERGY', 'SIGNAL'])
+        writer.writerow([run, eventid, eventtime, mjd, round(nu_energy/1000,1), round(sig,3)])
 
 #####################################################
 
