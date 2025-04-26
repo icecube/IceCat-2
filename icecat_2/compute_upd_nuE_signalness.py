@@ -71,8 +71,6 @@ def extract_qtot_from_i3file(infile):
                 alert_data = json.loads(alert_json)
                 return alert_data.get('qtot')
 
-#print('run, evtid, ra, dec, zenith, azimuth, qtot, te_alldoms, te_orig, nu_energy, signalness')
-
 ##########################
 
 def extract_info(run,eventid):
@@ -102,8 +100,6 @@ def extract_info(run,eventid):
 
     nu_energy  = neutrino_energy(te_alldoms)
     sig        = signalness(zenith, dec, qtot, te_alldoms)[0]
-
-    #print(run, eventid, round(ra,3), round(dec,3), round(zenith,3), round(azimuth,3), round(qtot,3), round(te_alldoms,3), round(te_orig,3), round(nu_energy,3), round(sig,3))
 
     output_csv = 'extracted_upd_alert_info.csv'
     file_exists = os.path.isfile(output_csv)
