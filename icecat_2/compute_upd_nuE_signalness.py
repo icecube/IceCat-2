@@ -64,7 +64,7 @@ def extract_coordinates_from_outputreco_csv(run, evt):
     import pandas as pd
      
     infile = 'output_reco_pass2.csv'
-    outputreco = pd.read_csv(infile)
+    outputreco = pd.read_csv(cfg.i3files_dir+infile)
     # Filter rows based on 'Run' and 'EventID' columns
     filtered_data = outputreco[(outputreco['Run'] == run) & (outputreco['EventID'] == evt)]
     # Extract RA and Dec values
