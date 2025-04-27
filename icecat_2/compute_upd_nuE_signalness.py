@@ -64,7 +64,7 @@ def extract_coordinates_from_outputreco_csv(run, evt):
     import pandas as pd
      
     infile = 'output_reco_pass2.csv'
-    outputreco = pd.read_csv(cfg.i3files_dir+infile)
+    outputreco = pd.read_csv(cfg.alerts_table_dir+infile)
     # Filter rows based on 'Run' and 'EventID' columns
     filtered_data = outputreco[(outputreco['Run'] == run) & (outputreco['EventID'] == evt)]
     # Extract RA and Dec values
@@ -123,7 +123,7 @@ def extract_info(run,eventid):
 
     print(run, eventid, round(np.degrees(ra),3), round(np.degrees(dec),3), round(zenith,3), round(azimuth,3), round(qtot,3), round(te_alldoms/1000,3), round(te_orig/1000,3), round(nu_energy/1000,3), round(sig,5))
 
-    output_csv = 'extracted_upd_alert_info.csv'
+    output_csv = cfg.alerts_table_dir+'extracted_upd_alert_info.csv'
     file_exists = os.path.isfile(output_csv)
     with open(output_csv, mode='a', newline='') as file:
         writer = csv.writer(file)
@@ -133,7 +133,7 @@ def extract_info(run,eventid):
 
 ##############################
 
-output_csv = 'extracted_upd_alert_info.csv'
+output_csv = cfg.alerts_table_dir+'extracted_upd_alert_info.csv'
 if os.path.isfile(output_csv):
     os.remove(output_csv)
 
