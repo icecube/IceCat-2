@@ -154,6 +154,15 @@ def apply_updated_filters(run, eventid, tag=''):
              pulses="OnlineL2_CleanedMuonPulses",
              If=which_split("InIceSplit"))
 
+    
+    tray.Add(HESE_filter, "hese_online",
+                 # Note HESE filter does not want cleaned pulses
+                 pulses="SplitUncleanedInIcePulses",
+                 If=which_split("InIceSplit"))
+    tray.AddSegment(EHEFilter, "EHEFilter",
+                 If = which_split("InIceSplit")
+    )
+
     tray.AddModule(
         "I3Writer",
         "writer",
