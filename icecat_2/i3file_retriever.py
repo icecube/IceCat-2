@@ -156,19 +156,6 @@ class EventFilter:
                 dataclasses.I3VectorString(passedfilters)
             )
 
-        def SelectOnlyIceCubePulses(frame, pulses):
-            """Create a masked pulsemap which contains only IceCube DOMs."""
-            """From online filters."""
-            max_icecube_string = 78
-            mask = dataclasses.I3RecoPulseSeriesMapMask(
-                frame,
-                pulses,
-                lambda om, idx, pulse: om.string <= max_icecube_string
-            )  # noqa: ARG005
-            frame[pulses + "IC"] = mask
-            return True
-
-
         tray.Add('I3Reader', Filenamelist=input_path)
         tray.Add(
             function,
@@ -178,10 +165,10 @@ class EventFilter:
         tray.Add(
             'Delete',
             keys=[
-                'CalibratedWaveforms',
-                'CalibratedWaveformRange',
-                'CalibrationErrata',
-                'SaturationWindows',
+                #'CalibratedWaveforms',
+                #'CalibratedWaveformRange',
+                #'CalibrationErrata',
+                #'SaturationWindows',
                 'OnlineL2_HitStatisticsValuesIC',
             ],
             If=lambda f: f.Has(_raw)
@@ -207,32 +194,16 @@ class EventFilter:
                 icetray.I3Frame.DAQ
             ],
         )
-        tray.Add(
-            'I3WaveCalibrator',
-            Launches=_raw,
-            Waveforms="CalibratedWaveforms",
-            If=lambda f: f.Has(_raw)
-        )
-        tray.Add(
-            'I3PMTSaturationFlagger',
-            If=lambda f: f.Has(_raw)
-        )
-
-        tray.Add(
-            SelectOnlyIceCubePulses,
-            "OnlineL2_SelectICPulses",
-            pulses="OnlineL2_CleanedMuonPulses"
-        )
-        
-        tray.Add(
-            hit_statistics.I3HitStatisticsCalculatorSegment,
-            'OnlineL2_HitStatisticsValuesIC',
-            PulseSeriesMapName='OnlineL2_CleanedMuonPulsesIC',
-            OutputI3HitStatisticsValuesName='OnlineL2_HitStatisticsValuesIC',
-            BookIt=True,
-            #If=lambda f: If(f),
-        )
-        
+        #tray.Add(
+        #    'I3WaveCalibrator',
+        #    Launches=_raw,
+        #    Waveforms="CalibratedWaveforms",
+        #    If=lambda f: f.Has(_raw)
+        #)
+        #tray.Add(
+        #    'I3PMTSaturationFlagger',
+        #    If=lambda f: f.Has(_raw)
+        #)
 
         tray.Add(
             'I3Writer',
